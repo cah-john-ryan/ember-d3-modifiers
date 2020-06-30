@@ -1,5 +1,6 @@
 import Modifier from 'ember-modifier';
 import { tracked } from "@glimmer/tracking";
+import { dasherize } from '@ember/string';
 import * as d3 from 'd3';
 
 export default class D3TimeSeriesModifier extends Modifier {
@@ -115,7 +116,7 @@ export default class D3TimeSeriesModifier extends Modifier {
 
     if (thresholdSeriesData.length > 0) {
       thresholdSeriesData.forEach(thresholdData => {
-        const thresholdDataSeriesIdDashCased = thresholdData[0].seriesId.replace(/\s+/g, '-').toLowerCase();
+        const thresholdDataSeriesIdDashCased = dasherize(thresholdData[0].seriesId);
         svg.append('path')
           .datum(thresholdData)
           .attr('class', thresholdDataSeriesIdDashCased)

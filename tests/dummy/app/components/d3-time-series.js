@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
+import { dasherize } from '@ember/string';
 import * as moment from 'moment';
 
 export default class D3TimeSeriesComponent extends Component {
@@ -57,7 +58,6 @@ export default class D3TimeSeriesComponent extends Component {
   renderData(svg, xScale, yScale, d3Config, dataToRender) {
     let seriesNumber = 1;
     this.getSeriesIdListing(dataToRender).forEach(seriesId => {
-      const seriesIdDashCased = seriesId.replace(/\s+/g, '-').toLowerCase();
       const seriesData = dataToRender.filter(d => d.seriesId === seriesId);
       svg.selectAll('whatever')
         .data(seriesData)
@@ -66,7 +66,7 @@ export default class D3TimeSeriesComponent extends Component {
         .attr('cx', d => xScale(d.date))
         .attr('cy', d => yScale(d.value))
         .attr('r', d3Config.elementSize)
-        .attr('class', `dot series-${seriesNumber++} ${seriesIdDashCased}`);
+        .attr('class', `dot series-${seriesNumber++} ${dasherize(seriesId)}`);
     });
   }
 
