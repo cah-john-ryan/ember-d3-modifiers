@@ -1,6 +1,4 @@
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
-import { dasherize } from '@ember/string';
 import * as moment from 'moment';
 
 export default class D3TimeSeriesComponent extends Component {
@@ -18,8 +16,21 @@ export default class D3TimeSeriesComponent extends Component {
         tickCount: 10,
       }
     },
-    chartType: 'circle', // ['circle','line']
-    elementSize: 3,
+    // startYaxisAtZero: true,
+    // defaultDataConfig: {
+    //   chartType: 'line',
+    //   circleSize: 3,
+    //   lineSize: 2,
+    //   barWidth: 10
+    // },
+    dataConfig: {
+      'Temperature B': {
+        chartType: 'circle',
+        circleSize: 3,
+        lineSize: 2,
+        barWidth: 10
+      }
+    },
     thresholds: [
       { thresholdId: 'High Temperature Value', value: 6 },
       { thresholdId: 'Low Temperature Value', value: 2 }
@@ -27,6 +38,7 @@ export default class D3TimeSeriesComponent extends Component {
   };
 
   fakeSeriesIds = ['Temperature A', 'Temperature B', 'Temperature C'];
+  // fakeSeriesIds = ['Temperature A'];
 
   get chartData() {
     let chartDataToRender = [];

@@ -33,6 +33,15 @@ export default class D3TimeSeriesModifier extends Modifier {
   @tracked allDateValues = []; // All date values in the source data to help with mapping in the tooltip logic
 
   loadD3Chart() {
+    this.d3Config.defaultDataConfig = this.d3Config.defaultDataConfig ?? {
+      chartType: 'line',
+      circleSize: 3,
+      lineSize: 2,
+      barWidth: 10
+    };
+    if (this.d3Config.defaultChartType === 'area') {
+      this.d3Config.startYaxisAtZero = true;
+    }
     this.svgElement = this.createSvg();
 
     const thresholdSeriesData = this.thresholdLines;
@@ -66,7 +75,9 @@ export default class D3TimeSeriesModifier extends Modifier {
     return d3.select(this.element)
       .append('svg')
       .attr('width', this.d3Config.width)
-      .attr('height', this.d3Config.height);
+      .attr('height', this.d3Config.height)
+      .append("g")
+      .attr("transform", `translate(${this.d3Config.margin.left},${this.d3Config.margin.top})`);
   }
 
   get thresholdLines() {
@@ -104,13 +115,27 @@ export default class D3TimeSeriesModifier extends Modifier {
   xScaleGenerator(dataSeries) {
     return d3.scaleTime()
       .domain(d3.extent(dataSeries, d => d.date))
-      .range([this.d3Config.margin.left, this.d3Config.width - this.d3Config.margin.right]);
+      .range([0, this.widthWithinMargins]);
   }
 
   yScaleGenerator(dataSeries) {
     return d3.scaleLinear()
       .domain(this.d3Config.startYaxisAtZero ? [0, d3.max(dataSeries, d => d.value)] : d3.extent(dataSeries, d => d.value))
-      .range([this.d3Config.height - this.d3Config.margin.bottom, this.d3Config.margin.top]);
+      .range([this.heightWithinMargins, 0]);
+  }
+
+  lineGenerator() {
+    return d3.line()
+      .x((d) => this.getValueOnXaxis(d.date))
+      .y((d) => this.getValueOnYaxis(d.value))
+      .curve(d3.curveMonotoneX);
+  }
+
+  areaGenerator() {
+    return d3.area()
+      .x((d) => this.getValueOnXaxis(d.date))
+      .y0(this.getValueOnYaxis(0))
+      .y1((d) => this.getValueOnYaxis(d.value));
   }
 
   renderXandYaxis() {
@@ -119,7 +144,7 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   renderXaxis(g) {
-    return g.attr('transform', `translate(0,${this.d3Config.height - this.d3Config.margin.bottom})`).call(
+    return g.attr('transform', `translate(0, ${this.heightWithinMargins})`).call(
       d3
         .axisBottom(this.getValueOnXaxis)
         .ticks(this.d3Config.axis.x.tickCount)
@@ -128,7 +153,7 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   renderYaxis(g) {
-    return g.attr('transform', `translate(${this.d3Config.margin.left},0)`).call(
+    return g.call(
       d3
         .axisLeft(this.getValueOnYaxis)
         .ticks(this.d3Config.axis.y.tickCount)
@@ -141,14 +166,47 @@ export default class D3TimeSeriesModifier extends Modifier {
     let seriesNumber = 1;
     this.getSeriesIdListing(this.chartData).forEach(seriesId => {
       const seriesData = this.chartData.filter(d => d.seriesId === seriesId);
-      this.svgElement.selectAll('whatever')
-        .data(seriesData)
-        .enter()
-        .append('circle')
-        .attr('cx', d => this.getValueOnXaxis(d.date))
-        .attr('cy', d => this.getValueOnYaxis(d.value))
-        .attr('r', this.d3Config.elementSize)
-        .attr('class', `dot series-${seriesNumber++} ${dasherize(seriesId)}`);
+      const dataConfig = this.d3Config.dataConfig && this.d3Config.dataConfig[seriesId] ? this.d3Config.dataConfig[seriesId] : this.d3Config.defaultDataConfig;
+      if (dataConfig.chartType.includes('circle')) {
+        this.svgElement.selectAll('whatever')
+          .data(seriesData)
+          .enter()
+          .append('circle')
+          .attr('cx', d => this.getValueOnXaxis(d.date))
+          .attr('cy', d => this.getValueOnYaxis(d.value))
+          .attr('r', dataConfig.circleSize)
+          .attr('class', `circle series-${seriesNumber} ${dasherize(seriesId)}`);
+      }
+      if (dataConfig.chartType.includes('line')) {
+        this.svgElement.append('path')
+          .datum(seriesData)
+          .attr('class', `line series-${seriesNumber} ${dasherize(seriesId)}`)
+          .attr('fill', 'none')
+          .attr('stroke', 'black')
+          .attr('stroke-width', dataConfig.lineSize)
+          .attr('stroke-linejoin', 'round')
+          .attr('stroke-linecap', 'round')
+          .attr('d', this.lineGenerator());
+      }
+      if (dataConfig.chartType.includes('bar')) {
+        this.svgElement.selectAll('whatever')
+          .data(seriesData)
+          .enter()
+          .append('rect')
+          .attr('x', d => this.getValueOnXaxis(d.date))
+          .attr('y', d => this.getValueOnYaxis(d.value))
+          .attr('width', dataConfig.barWidth)
+          .attr('height', d => this.d3Config.margin.top + this.heightWithinMargins - this.getValueOnYaxis(d.value))
+          .attr('class', `bar series-${seriesNumber} ${dasherize(seriesId)}`);
+      }
+      if (dataConfig.chartType.includes('area')) {
+        this.svgElement.append('path')
+          .datum(seriesData)
+          .attr('class', `area series-${seriesNumber} ${dasherize(seriesId)}`)
+          .attr('d', this.areaGenerator());
+      }
+
+      seriesNumber++;
     });
   }
 
@@ -201,33 +259,30 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   renderThresholdLines(thresholdSeriesData) {
-    var valueline = d3.line()
-      .x((d) => this.getValueOnXaxis(d.date))
-      .y((d) => this.getValueOnYaxis(d.value));
-
     if (thresholdSeriesData.length > 0) {
       thresholdSeriesData.forEach(thresholdData => {
         const thresholdDataSeriesIdDashCased = dasherize(thresholdData[0].seriesId);
         this.svgElement.append('path')
           .datum(thresholdData)
           .attr('class', thresholdDataSeriesIdDashCased)
-          .attr('d', valueline);
+          .attr('d', this.lineGenerator());
       })
     }
   }
 
   renderAxisLabels() {
     this.svgElement.append('text')
-      .attr('text-anchor', 'end')
-      .attr('x', this.d3Config.margin.left + this.widthWithinMargins / 2)
-      .attr('y', this.heightWithinMargins + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
+      .attr('class', 'x-axis-label')
+      .attr('transform', `translate(${this.widthWithinMargins / 2}, ${this.heightWithinMargins + 35})`)
+      .style('text-anchor', 'middle')
       .text(this.d3Config.axis.x.title);
 
     this.svgElement.append('text')
-      .attr('text-anchor', 'end')
+      .attr('class', 'y-axis-label')
       .attr('transform', 'rotate(-90)')
-      .attr('y', this.d3Config.margin.left * 0.4)
-      .attr('x', -this.heightWithinMargins / 2 + this.d3Config.margin.bottom)
+      .attr('y', -35)
+      .attr('x', 0 - (this.heightWithinMargins / 2))
+      .style('text-anchor', 'middle')
       .text(this.d3Config.axis.y.title);
   }
 }

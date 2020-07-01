@@ -1,3 +1,12 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Noto Sans", "Ubuntu", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.42857142857143;
+}
+
 .d3-graph {
   position: relative;
 }
@@ -6,19 +15,55 @@
   background-color: #f5f2f0;
 }
 
-.d3-graph .series-1 {
-  fill: black;
+.d3-graph .circle.series-1:hover,
+.d3-graph .line.series-1:hover,
+.d3-graph .bar.series-1:hover,
+.d3-graph .circle.series-2:hover,
+.d3-graph .line.series-2:hover,
+.d3-graph .bar.series-2:hover,
+.d3-graph .circle.series-3:hover,
+.d3-graph .line.series-3:hover,
+.d3-graph .bar.series-3:hover {
+  fill: orange;
+  stroke: orange;
 }
 
-.d3-graph .series-2 {
+.d3-graph .area.series-1,
+.d3-graph .bar.series-1,
+.d3-graph .circle.series-1 {
   fill: blue;
+  stroke: blue;
 }
 
-.d3-graph .series-3 {
+.d3-graph .line.series-1 {
+  fill: none;
+  stroke: blue;
+}
+
+.d3-graph .area.series-2,
+.d3-graph .bar.series-2,
+.d3-graph .circle.series-2 {
+  fill: black;
+  stroke: black;
+}
+
+.d3-graph .line.series-2 {
+  fill: none;
+  stroke: black;
+}
+
+.d3-graph .area.series-3,
+.d3-graph .bar.series-3,
+.d3-graph .circle.series-3 {
   fill: green;
+  stroke: green;
 }
 
-/* Style the lines by removing the fill and applying a stroke */
+.d3-graph .line.series-3 {
+  fill: none;
+  stroke: green;
+}
+
 .d3-graph .high-temperature-value,
 .d3-graph .low-temperature-value {
   fill: none;
@@ -31,7 +76,7 @@
   padding: 5px;
   background-color: lightgray;
   border: 0px;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .d3-tooltip-hidden {
