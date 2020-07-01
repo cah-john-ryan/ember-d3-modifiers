@@ -234,8 +234,8 @@ export default class D3TimeSeriesModifier extends Modifier {
     this.tooltipVerticalLine.attr('stroke', 'black')
       .attr('x1', this.getValueOnXaxis(selectedDateOnXaxis))
       .attr('x2', this.getValueOnXaxis(selectedDateOnXaxis))
-      .attr('y1', this.d3Config.margin.top)
-      .attr('y2', this.d3Config.margin.top + this.heightWithinMargins);
+      .attr('y1', 0)
+      .attr('y2', this.heightWithinMargins);
 
     const dataForSelectedDate = this.chartData
       .filter(d => selectedDateOnXaxis.getTime() === d.date.getTime())
