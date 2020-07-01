@@ -18,6 +18,7 @@ export default class D3TimeSeriesComponent extends Component {
         tickCount: 10,
       }
     },
+    chartType: 'circle', // ['circle','line']
     elementSize: 3,
     thresholds: [
       { thresholdId: 'High Temperature Value', value: 6 },
@@ -52,30 +53,5 @@ export default class D3TimeSeriesComponent extends Component {
       d = d.add(1, 'hour');
     }
     return data;
-  }
-
-  @action
-  renderData(svg, xScale, yScale, d3Config, dataToRender) {
-    let seriesNumber = 1;
-    this.getSeriesIdListing(dataToRender).forEach(seriesId => {
-      const seriesData = dataToRender.filter(d => d.seriesId === seriesId);
-      svg.selectAll('whatever')
-        .data(seriesData)
-        .enter()
-        .append('circle')
-        .attr('cx', d => xScale(d.date))
-        .attr('cy', d => yScale(d.value))
-        .attr('r', d3Config.elementSize)
-        .attr('class', `dot series-${seriesNumber++} ${dasherize(seriesId)}`);
-    });
-  }
-
-  getSeriesIdListing(dataToRender) {
-    return dataToRender.reduce((listing, temperatureReading) => {
-      if (!listing.includes(temperatureReading.seriesId)) {
-        listing.push(temperatureReading.seriesId);
-      }
-      return listing;
-    }, []);
   }
 }

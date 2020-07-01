@@ -10,10 +10,10 @@ export default class D3TimeSeriesModifier extends Modifier {
     this.loadD3Chart();
   }
 
-  get height() {
+  get heightWithinMargins() {
     return this.d3Config.height - this.d3Config.margin.top - this.d3Config.margin.bottom;
   }
-  get width() {
+  get widthWithinMargins() {
     return this.d3Config.width - this.d3Config.margin.left - this.d3Config.margin.right;
   }
 
@@ -21,41 +21,45 @@ export default class D3TimeSeriesModifier extends Modifier {
     return this.args.named.d3Config;
   }
 
-  xScale = null;
-  yScale = null;
-
-  tooltipBoxOverlay = null;
-  tooltipVerticalLine = null;
-  tooltip = null;
-
-  @tracked allXvalues = [];
   @tracked chartData = this.args.named.chartData;
 
+  svgElement = null;
+  getValueOnXaxis = () => { return null; }; // Get the x value (in pixels) from the date provided
+  getValueOnYaxis = () => { return null; }; // Get the y value (in pixels) from the value provided
+
+  tooltipBoxOverlay = null; // A full overlay of the chart to detect mouse movement for tooltip rendering
+  tooltipVerticalLine = null; // A vertical line indicator to show the date current selected by the location of the mouse
+  tooltipElement = null; // The tooltip that gets rendered on top of the svg d3 chart
+  @tracked allDateValues = []; // All date values in the source data to help with mapping in the tooltip logic
+
   loadD3Chart() {
-    const svg = this.createSvg();
+    this.svgElement = this.createSvg();
 
     const thresholdSeriesData = this.thresholdLines;
 
-    this.xScale = this.xScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
-    this.yScale = this.yScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
-    this.createXandYaxis(svg, this.xScale, this.yScale);
+    this.getValueOnXaxis = this.xScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
+    this.getValueOnYaxis = this.yScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
+    this.renderXandYaxis();
+    this.renderAxisLabels();
 
-    this.args.named.renderData(svg, this.xScale, this.yScale, this.d3Config, this.chartData);
+    this.renderThresholdLines(thresholdSeriesData);
 
-    this.tooltip = d3.select(this.element)
+    this.renderData();
+
+    this.renderTooltipElements();
+  }
+
+  renderTooltipElements() {
+    this.tooltipElement = d3.select(this.element)
       .append('div')
       .attr('class', 'd3-tooltip d3-tooltip-hidden');
-    this.tooltipVerticalLine = svg.append('line');
-    this.tooltipBoxOverlay = svg.append('rect')
+    this.tooltipVerticalLine = this.svgElement.append('line');
+    this.tooltipBoxOverlay = this.svgElement.append('rect')
       .attr('width', this.d3Config.width)
       .attr('height', this.d3Config.height)
       .attr('opacity', 0)
       .on('mousemove', this.handleMouseMove)
       .on('mouseout', this.handleMouseOut);
-
-    this.renderThresholdLines(svg, this.xScale, this.yScale, thresholdSeriesData);
-
-    this.renderAxisLabels(svg);
   }
 
   createSvg() {
@@ -63,45 +67,6 @@ export default class D3TimeSeriesModifier extends Modifier {
       .append('svg')
       .attr('width', this.d3Config.width)
       .attr('height', this.d3Config.height);
-  }
-
-  @action
-  handleMouseMove() {
-    const mouseLocation = d3.mouse(this.tooltipBoxOverlay.node())[0];
-    const mouseLocationOnXaxis = this.xScale.invert(mouseLocation);
-    let selectedDateOnXaxis = this.allXvalues[0];
-    for (let i = 0; i < this.allXvalues.length; i++) {
-      if (this.allXvalues[i] > mouseLocationOnXaxis) {
-        break;
-      }
-      selectedDateOnXaxis = this.allXvalues[i];
-    }
-
-    this.tooltipVerticalLine.attr('stroke', 'black')
-      .attr('x1', this.xScale(selectedDateOnXaxis))
-      .attr('x2', this.xScale(selectedDateOnXaxis))
-      .attr('y1', this.d3Config.margin.top)
-      .attr('y2', this.d3Config.margin.top + this.height);
-
-    const dataForSelectedDate = this.chartData
-      .filter(d => selectedDateOnXaxis.getTime() === d.date.getTime())
-      .sort(d => d.seriesId);
-
-    this.tooltip.html(moment(selectedDateOnXaxis).format('MMMM DD, YYYY hh:mm A z'))
-      .attr('class', 'd3-tooltip')
-      .style('left', d3.event.pageX + 'px')
-      .style('top', d3.event.pageY - this.d3Config.margin.top - 20 + 'px')
-      .selectAll()
-      .data(dataForSelectedDate)
-      .enter()
-      .append('div')
-      .html(d => d.seriesId + ': ' + d.value);
-  }
-
-  @action
-  handleMouseOut() {
-    if (this.tooltip) this.tooltip.attr('class', 'd3-tooltip d3-tooltip-hidden').html('');
-    if (this.tooltipVerticalLine) this.tooltipVerticalLine.attr('stroke', 'none');
   }
 
   get thresholdLines() {
@@ -112,7 +77,7 @@ export default class D3TimeSeriesModifier extends Modifier {
       return currentValues;
     }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date, setOfXvalues: new Set() });
 
-    this.allXvalues = Array.from(setOfXvalues).sort();
+    this.allDateValues = Array.from(setOfXvalues).sort();
 
     let thresholdSeriesData = [];
     if (this.d3Config.thresholds && this.d3Config.thresholds.length > 0) {
@@ -148,38 +113,102 @@ export default class D3TimeSeriesModifier extends Modifier {
       .range([this.d3Config.height - this.d3Config.margin.bottom, this.d3Config.margin.top]);
   }
 
-  createXandYaxis(svg, xScale, yScale) {
-    svg.append('g').call((g) => this.xAxis(g, xScale));
-    svg.append('g').call((g) => this.yAxis(g, yScale));
+  renderXandYaxis() {
+    this.svgElement.append('g').call((g) => this.renderXaxis(g, this.getValueOnXaxis));
+    this.svgElement.append('g').call((g) => this.renderYaxis(g, this.getValueOnYaxis));
   }
 
-  xAxis(g, xScale) {
+  renderXaxis(g) {
     return g.attr('transform', `translate(0,${this.d3Config.height - this.d3Config.margin.bottom})`).call(
       d3
-        .axisBottom(xScale)
+        .axisBottom(this.getValueOnXaxis)
         .ticks(this.d3Config.axis.x.tickCount)
         .tickSizeOuter(0)
     );
   }
 
-  yAxis(g, yScale) {
+  renderYaxis(g) {
     return g.attr('transform', `translate(${this.d3Config.margin.left},0)`).call(
       d3
-        .axisLeft(yScale)
+        .axisLeft(this.getValueOnYaxis)
         .ticks(this.d3Config.axis.y.tickCount)
         .tickSizeOuter(0)
     );
   }
 
-  renderThresholdLines(svg, xScale, yScale, thresholdSeriesData) {
+  @action
+  renderData() {
+    let seriesNumber = 1;
+    this.getSeriesIdListing(this.chartData).forEach(seriesId => {
+      const seriesData = this.chartData.filter(d => d.seriesId === seriesId);
+      this.svgElement.selectAll('whatever')
+        .data(seriesData)
+        .enter()
+        .append('circle')
+        .attr('cx', d => this.getValueOnXaxis(d.date))
+        .attr('cy', d => this.getValueOnYaxis(d.value))
+        .attr('r', this.d3Config.elementSize)
+        .attr('class', `dot series-${seriesNumber++} ${dasherize(seriesId)}`);
+    });
+  }
+
+  getSeriesIdListing() {
+    return this.chartData.reduce((listing, temperatureReading) => {
+      if (!listing.includes(temperatureReading.seriesId)) {
+        listing.push(temperatureReading.seriesId);
+      }
+      return listing;
+    }, []);
+  }
+
+  @action
+  handleMouseMove() {
+    const mouseLocation = d3.mouse(this.tooltipBoxOverlay.node())[0];
+    const mouseLocationOnXaxis = this.getValueOnXaxis.invert(mouseLocation);
+    let selectedDateOnXaxis = this.allDateValues[0];
+    for (let i = 0; i < this.allDateValues.length; i++) {
+      if (this.allDateValues[i] > mouseLocationOnXaxis) {
+        break;
+      }
+      selectedDateOnXaxis = this.allDateValues[i];
+    }
+
+    this.tooltipVerticalLine.attr('stroke', 'black')
+      .attr('x1', this.getValueOnXaxis(selectedDateOnXaxis))
+      .attr('x2', this.getValueOnXaxis(selectedDateOnXaxis))
+      .attr('y1', this.d3Config.margin.top)
+      .attr('y2', this.d3Config.margin.top + this.heightWithinMargins);
+
+    const dataForSelectedDate = this.chartData
+      .filter(d => selectedDateOnXaxis.getTime() === d.date.getTime())
+      .sort(d => d.seriesId);
+
+    this.tooltipElement.html(moment(selectedDateOnXaxis).format('MMMM DD, YYYY hh:mm A z'))
+      .attr('class', 'd3-tooltip')
+      .style('left', d3.event.pageX + 'px')
+      .style('top', d3.event.pageY - this.d3Config.margin.top - 20 + 'px')
+      .selectAll()
+      .data(dataForSelectedDate)
+      .enter()
+      .append('div')
+      .html(d => d.seriesId + ': ' + d.value);
+  }
+
+  @action
+  handleMouseOut() {
+    if (this.tooltipElement) this.tooltipElement.attr('class', 'd3-tooltip d3-tooltip-hidden').html('');
+    if (this.tooltipVerticalLine) this.tooltipVerticalLine.attr('stroke', 'none');
+  }
+
+  renderThresholdLines(thresholdSeriesData) {
     var valueline = d3.line()
-      .x(function (d) { return xScale(d.date); })
-      .y(function (d) { return yScale(d.value); });
+      .x((d) => this.getValueOnXaxis(d.date))
+      .y((d) => this.getValueOnYaxis(d.value));
 
     if (thresholdSeriesData.length > 0) {
       thresholdSeriesData.forEach(thresholdData => {
         const thresholdDataSeriesIdDashCased = dasherize(thresholdData[0].seriesId);
-        svg.append('path')
+        this.svgElement.append('path')
           .datum(thresholdData)
           .attr('class', thresholdDataSeriesIdDashCased)
           .attr('d', valueline);
@@ -187,18 +216,18 @@ export default class D3TimeSeriesModifier extends Modifier {
     }
   }
 
-  renderAxisLabels(svg) {
-    svg.append('text')
+  renderAxisLabels() {
+    this.svgElement.append('text')
       .attr('text-anchor', 'end')
-      .attr('x', this.d3Config.margin.left + this.width / 2)
-      .attr('y', this.height + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
+      .attr('x', this.d3Config.margin.left + this.widthWithinMargins / 2)
+      .attr('y', this.heightWithinMargins + this.d3Config.margin.top + this.d3Config.margin.bottom * 0.8)
       .text(this.d3Config.axis.x.title);
 
-    svg.append('text')
+    this.svgElement.append('text')
       .attr('text-anchor', 'end')
       .attr('transform', 'rotate(-90)')
       .attr('y', this.d3Config.margin.left * 0.4)
-      .attr('x', -this.height / 2 + this.d3Config.margin.bottom)
+      .attr('x', -this.heightWithinMargins / 2 + this.d3Config.margin.bottom)
       .text(this.d3Config.axis.y.title);
   }
 }
