@@ -1,7 +1,9 @@
 import Modifier from 'ember-modifier';
-import { tracked } from "@glimmer/tracking";
+import { tracked } from '@glimmer/tracking';
 import { dasherize } from '@ember/string';
+import { action } from '@ember/object';
 import * as d3 from 'd3';
+import * as moment from 'moment';
 
 export default class D3TimeSeriesModifier extends Modifier {
   didReceiveArguments() {
@@ -19,21 +21,39 @@ export default class D3TimeSeriesModifier extends Modifier {
     return this.args.named.d3Config;
   }
 
-  @tracked
-  chartData = this.args.named.chartData;
+  xScale = null;
+  yScale = null;
+
+  tooltipBoxOverlay = null;
+  tooltipVerticalLine = null;
+  tooltip = null;
+
+  @tracked allXvalues = [];
+  @tracked chartData = this.args.named.chartData;
 
   loadD3Chart() {
     const svg = this.createSvg();
 
     const thresholdSeriesData = this.thresholdLines;
 
-    const xScale = this.xScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
-    const yScale = this.yScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
-    this.createXandYaxis(svg, xScale, yScale);
+    this.xScale = this.xScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
+    this.yScale = this.yScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
+    this.createXandYaxis(svg, this.xScale, this.yScale);
 
-    this.args.named.renderData(svg, xScale, yScale, this.d3Config, this.chartData);
+    this.args.named.renderData(svg, this.xScale, this.yScale, this.d3Config, this.chartData);
 
-    this.renderThresholdLines(svg, xScale, yScale, thresholdSeriesData);
+    this.tooltip = d3.select(this.element)
+      .append('div')
+      .attr('class', 'd3-tooltip d3-tooltip-hidden');
+    this.tooltipVerticalLine = svg.append('line');
+    this.tooltipBoxOverlay = svg.append('rect')
+      .attr('width', this.d3Config.width)
+      .attr('height', this.d3Config.height)
+      .attr('opacity', 0)
+      .on('mousemove', this.handleMouseMove)
+      .on('mouseout', this.handleMouseOut);
+
+    this.renderThresholdLines(svg, this.xScale, this.yScale, thresholdSeriesData);
 
     this.renderAxisLabels(svg);
   }
@@ -45,12 +65,54 @@ export default class D3TimeSeriesModifier extends Modifier {
       .attr('height', this.d3Config.height);
   }
 
+  @action
+  handleMouseMove() {
+    const mouseLocation = d3.mouse(this.tooltipBoxOverlay.node())[0];
+    const mouseLocationOnXaxis = this.xScale.invert(mouseLocation);
+    let selectedDateOnXaxis = this.allXvalues[0];
+    for (let i = 0; i < this.allXvalues.length; i++) {
+      if (this.allXvalues[i] > mouseLocationOnXaxis) {
+        break;
+      }
+      selectedDateOnXaxis = this.allXvalues[i];
+    }
+
+    this.tooltipVerticalLine.attr('stroke', 'black')
+      .attr('x1', this.xScale(selectedDateOnXaxis))
+      .attr('x2', this.xScale(selectedDateOnXaxis))
+      .attr('y1', this.d3Config.margin.top)
+      .attr('y2', this.d3Config.margin.top + this.height);
+
+    const dataForSelectedDate = this.chartData
+      .filter(d => selectedDateOnXaxis.getTime() === d.date.getTime())
+      .sort(d => d.seriesId);
+
+    this.tooltip.html(moment(selectedDateOnXaxis).format('MMMM DD, YYYY hh:mm A z'))
+      .attr('class', 'd3-tooltip')
+      .style('left', d3.event.pageX + 'px')
+      .style('top', d3.event.pageY - this.d3Config.margin.top - 20 + 'px')
+      .selectAll()
+      .data(dataForSelectedDate)
+      .enter()
+      .append('div')
+      .html(d => d.seriesId + ': ' + d.value);
+  }
+
+  @action
+  handleMouseOut() {
+    if (this.tooltip) this.tooltip.attr('class', 'd3-tooltip d3-tooltip-hidden').html('');
+    if (this.tooltipVerticalLine) this.tooltipVerticalLine.attr('stroke', 'none');
+  }
+
   get thresholdLines() {
-    const { minDate, maxDate } = this.chartData.reduce((currentValues, temperatureReading) => {
+    const { minDate, maxDate, setOfXvalues } = this.chartData.reduce((currentValues, temperatureReading) => {
       currentValues.minDate = currentValues.minDate > temperatureReading.date ? temperatureReading.date : currentValues.minDate;
       currentValues.maxDate = currentValues.maxDate < temperatureReading.date ? temperatureReading.date : currentValues.maxDate;
+      currentValues.setOfXvalues.add(temperatureReading.date);
       return currentValues;
-    }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date });
+    }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date, setOfXvalues: new Set() });
+
+    this.allXvalues = Array.from(setOfXvalues).sort();
 
     let thresholdSeriesData = [];
     if (this.d3Config.thresholds && this.d3Config.thresholds.length > 0) {

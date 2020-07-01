@@ -15,7 +15,7 @@ export default class D3TimeSeriesComponent extends Component {
       },
       y: {
         title: 'Temperature (°C)',
-        tickCount: 5,
+        tickCount: 10,
       }
     },
     elementSize: 3,
@@ -25,7 +25,7 @@ export default class D3TimeSeriesComponent extends Component {
     ]
   };
 
-  fakeSeriesIds = ['TemperatureA', 'TemperatureB'];
+  fakeSeriesIds = ['Temperature A', 'Temperature B', 'Temperature C'];
 
   get chartData() {
     let chartDataToRender = [];

@@ -1,3 +1,7 @@
+.d3-graph {
+  position: relative;
+}
+
 .d3-graph svg {
   background-color: #f5f2f0;
 }
@@ -10,10 +14,26 @@
   fill: blue;
 }
 
+.d3-graph .series-3 {
+  fill: green;
+}
+
 /* Style the lines by removing the fill and applying a stroke */
 .d3-graph .high-temperature-value,
 .d3-graph .low-temperature-value {
   fill: none;
   stroke: red;
   stroke-width: 1;
+}
+
+.d3-tooltip {
+  position: absolute;
+  padding: 5px;
+  background-color: lightgray;
+  border: 0px;
+  border-radius: 8px;
+}
+
+.d3-tooltip-hidden {
+  display: none;
 }
