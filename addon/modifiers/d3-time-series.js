@@ -28,20 +28,13 @@ export default class D3TimeSeriesModifier extends Modifier {
   getValueOnYaxis = () => { return null; }; // Get the y value (in pixels) from the value provided
 
   tooltipBoxOverlay = null; // A full overlay of the chart to detect mouse movement for tooltip rendering
-  tooltipVerticalLine = null; // A vertical line indicator to show the date current selected by the location of the mouse
+  tooltipVerticalLine = null; // A vertical line indicator to show the date currently selected by the location of the mouse
   tooltipElement = null; // The tooltip that gets rendered on top of the svg d3 chart
-  @tracked allDateValues = []; // All date values in the source data to help with mapping in the tooltip logic
+  @tracked allDateValues = []; // All date values in the source data to help with xAxis mapping in the tooltip logic
 
   loadD3Chart() {
-    this.d3Config.defaultDataConfig = this.d3Config.defaultDataConfig ?? {
-      chartType: 'line',
-      circleSize: 3,
-      lineSize: 2,
-      barWidth: 10
-    };
-    if (this.d3Config.defaultChartType === 'area') {
-      this.d3Config.startYaxisAtZero = true;
-    }
+    this.setupD3ConfigDefaults();
+
     this.svgElement = this.createSvg();
 
     const thresholdSeriesData = this.thresholdLines;
@@ -58,17 +51,16 @@ export default class D3TimeSeriesModifier extends Modifier {
     this.renderTooltipElements();
   }
 
-  renderTooltipElements() {
-    this.tooltipElement = d3.select(this.element)
-      .append('div')
-      .attr('class', 'd3-tooltip d3-tooltip-hidden');
-    this.tooltipVerticalLine = this.svgElement.append('line');
-    this.tooltipBoxOverlay = this.svgElement.append('rect')
-      .attr('width', this.d3Config.width)
-      .attr('height', this.d3Config.height)
-      .attr('opacity', 0)
-      .on('mousemove', this.handleMouseMove)
-      .on('mouseout', this.handleMouseOut);
+  setupD3ConfigDefaults() {
+    this.d3Config.defaultDataConfig = this.d3Config.defaultDataConfig ?? {
+      chartType: 'line',
+      circleSize: 3,
+      lineSize: 2,
+      barWidth: 10
+    };
+    if (this.d3Config.defaultChartType === 'area') {
+      this.d3Config.startYaxisAtZero = true;
+    }
   }
 
   createSvg() {
@@ -120,7 +112,9 @@ export default class D3TimeSeriesModifier extends Modifier {
 
   yScaleGenerator(dataSeries) {
     return d3.scaleLinear()
-      .domain(this.d3Config.startYaxisAtZero ? [0, d3.max(dataSeries, d => d.value)] : d3.extent(dataSeries, d => d.value))
+      .domain(this.d3Config.startYaxisAtZero ?
+        [0, d3.max(dataSeries, d => d.value)] :
+        d3.extent(dataSeries, d => d.value))
       .range([this.heightWithinMargins, 0]);
   }
 
@@ -166,7 +160,9 @@ export default class D3TimeSeriesModifier extends Modifier {
     let seriesNumber = 1;
     this.getSeriesIdListing(this.chartData).forEach(seriesId => {
       const seriesData = this.chartData.filter(d => d.seriesId === seriesId);
-      const dataConfig = this.d3Config.dataConfig && this.d3Config.dataConfig[seriesId] ? this.d3Config.dataConfig[seriesId] : this.d3Config.defaultDataConfig;
+      const dataConfig = this.d3Config.dataConfig && this.d3Config.dataConfig[seriesId] ?
+        this.d3Config.dataConfig[seriesId] :
+        this.d3Config.defaultDataConfig;
       if (dataConfig.chartType.includes('circle')) {
         this.svgElement.selectAll('whatever')
           .data(seriesData)
@@ -205,18 +201,54 @@ export default class D3TimeSeriesModifier extends Modifier {
           .attr('class', `area series-${seriesNumber} ${dasherize(seriesId)}`)
           .attr('d', this.areaGenerator());
       }
-
       seriesNumber++;
     });
   }
 
   getSeriesIdListing() {
-    return this.chartData.reduce((listing, temperatureReading) => {
-      if (!listing.includes(temperatureReading.seriesId)) {
-        listing.push(temperatureReading.seriesId);
-      }
-      return listing;
-    }, []);
+    const seriesIdSet = this.chartData.reduce((listing, temperatureReading) => listing.add(temperatureReading.seriesId), new Set());
+    return Array.from(seriesIdSet);
+  }
+
+  renderThresholdLines(thresholdSeriesData) {
+    if (thresholdSeriesData.length > 0) {
+      thresholdSeriesData.forEach(thresholdData => {
+        const thresholdDataSeriesIdDashCased = dasherize(thresholdData[0].seriesId);
+        this.svgElement.append('path')
+          .datum(thresholdData)
+          .attr('class', thresholdDataSeriesIdDashCased)
+          .attr('d', this.lineGenerator());
+      })
+    }
+  }
+
+  renderAxisLabels() {
+    this.svgElement.append('text')
+      .attr('class', 'x-axis-label')
+      .attr('transform', `translate(${this.widthWithinMargins / 2}, ${this.heightWithinMargins + 35})`)
+      .style('text-anchor', 'middle')
+      .text(this.d3Config.axis.x.title);
+
+    this.svgElement.append('text')
+      .attr('class', 'y-axis-label')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', -35)
+      .attr('x', 0 - (this.heightWithinMargins / 2))
+      .style('text-anchor', 'middle')
+      .text(this.d3Config.axis.y.title);
+  }
+
+  renderTooltipElements() {
+    this.tooltipElement = d3.select(this.element)
+      .append('div')
+      .attr('class', 'd3-tooltip d3-tooltip-hidden');
+    this.tooltipVerticalLine = this.svgElement.append('line');
+    this.tooltipBoxOverlay = this.svgElement.append('rect')
+      .attr('width', this.d3Config.width)
+      .attr('height', this.d3Config.height)
+      .attr('opacity', 0)
+      .on('mousemove', this.handleMouseMove)
+      .on('mouseout', this.handleMouseOut);
   }
 
   @action
@@ -256,33 +288,5 @@ export default class D3TimeSeriesModifier extends Modifier {
   handleMouseOut() {
     if (this.tooltipElement) this.tooltipElement.attr('class', 'd3-tooltip d3-tooltip-hidden').html('');
     if (this.tooltipVerticalLine) this.tooltipVerticalLine.attr('stroke', 'none');
-  }
-
-  renderThresholdLines(thresholdSeriesData) {
-    if (thresholdSeriesData.length > 0) {
-      thresholdSeriesData.forEach(thresholdData => {
-        const thresholdDataSeriesIdDashCased = dasherize(thresholdData[0].seriesId);
-        this.svgElement.append('path')
-          .datum(thresholdData)
-          .attr('class', thresholdDataSeriesIdDashCased)
-          .attr('d', this.lineGenerator());
-      })
-    }
-  }
-
-  renderAxisLabels() {
-    this.svgElement.append('text')
-      .attr('class', 'x-axis-label')
-      .attr('transform', `translate(${this.widthWithinMargins / 2}, ${this.heightWithinMargins + 35})`)
-      .style('text-anchor', 'middle')
-      .text(this.d3Config.axis.x.title);
-
-    this.svgElement.append('text')
-      .attr('class', 'y-axis-label')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', -35)
-      .attr('x', 0 - (this.heightWithinMargins / 2))
-      .style('text-anchor', 'middle')
-      .text(this.d3Config.axis.y.title);
   }
 }
