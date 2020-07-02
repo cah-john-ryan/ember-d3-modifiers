@@ -80,7 +80,7 @@ export default class D3TimeSeriesModifier extends Modifier {
       return currentValues;
     }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date, setOfXvalues: new Set() });
 
-    this.allDateValues = Array.from(setOfXvalues).sort();
+    this.allDateValues = Array.from(setOfXvalues).sort((a, b) => a.getTime() > b.getTime());
 
     let thresholdSeriesData = [];
     if (this.d3Config.thresholds && this.d3Config.thresholds.length > 0) {
@@ -244,9 +244,10 @@ export default class D3TimeSeriesModifier extends Modifier {
       .attr('class', 'd3-tooltip d3-tooltip-hidden');
     this.tooltipVerticalLine = this.svgElement.append('line');
     this.tooltipBoxOverlay = this.svgElement.append('rect')
-      .attr('width', this.d3Config.width)
-      .attr('height', this.d3Config.height)
+      .attr('width', this.widthWithinMargins)
+      .attr('height', this.heightWithinMargins)
       .attr('opacity', 0)
+      .attr('class', 'd3-tooltip-box-overlay')
       .on('mousemove', this.handleMouseMove)
       .on('mouseout', this.handleMouseOut);
   }
@@ -263,9 +264,10 @@ export default class D3TimeSeriesModifier extends Modifier {
       selectedDateOnXaxis = this.allDateValues[i];
     }
 
+    const selectedXaxisValue = this.getValueOnXaxis(selectedDateOnXaxis);
     this.tooltipVerticalLine.attr('stroke', 'black')
-      .attr('x1', this.getValueOnXaxis(selectedDateOnXaxis))
-      .attr('x2', this.getValueOnXaxis(selectedDateOnXaxis))
+      .attr('x1', selectedXaxisValue)
+      .attr('x2', selectedXaxisValue)
       .attr('y1', 0)
       .attr('y2', this.heightWithinMargins);
 
