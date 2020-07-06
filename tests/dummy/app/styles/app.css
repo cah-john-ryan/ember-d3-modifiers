@@ -15,53 +15,72 @@ body {
   background-color: #f5f2f0;
 }
 
-.d3-graph .circle.series-1:hover,
-.d3-graph .line.series-1:hover,
-.d3-graph .bar.series-1:hover,
-.d3-graph .circle.series-2:hover,
-.d3-graph .line.series-2:hover,
-.d3-graph .bar.series-2:hover,
-.d3-graph .circle.series-3:hover,
-.d3-graph .line.series-3:hover,
-.d3-graph .bar.series-3:hover {
-  fill: orange;
-  stroke: orange;
-}
-
 .d3-graph .area.series-1,
 .d3-graph .bar.series-1,
 .d3-graph .circle.series-1 {
-  fill: blue;
-  stroke: blue;
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+  /* config values that can also be overridden here in CSS
+    r: 10; // circle radius
+    width: 15px; // bar width
+    stroke-width: 5; 
+   */
 }
 
 .d3-graph .line.series-1 {
+  stroke: DarkBlue;
   fill: none;
-  stroke: blue;
+  /* config values that can also be overridden here in CSS
+    stroke-width: 5; 
+   */
 }
 
 .d3-graph .area.series-2,
 .d3-graph .bar.series-2,
 .d3-graph .circle.series-2 {
-  fill: black;
   stroke: black;
+  fill: darkgray;
 }
 
 .d3-graph .line.series-2 {
-  fill: none;
   stroke: black;
+  fill: none;
 }
 
 .d3-graph .area.series-3,
 .d3-graph .bar.series-3,
 .d3-graph .circle.series-3 {
-  fill: green;
-  stroke: green;
+  stroke: darkgreen;
+  fill: lightgreen;
 }
 
 .d3-graph .line.series-3 {
+  stroke: darkgreen;
   fill: none;
-  stroke: green;
+}
+
+.d3-graph .area.series-4,
+.d3-graph .bar.series-4,
+.d3-graph .circle.series-4 {
+  stroke: darkmagenta;
+  fill: violet;
+}
+
+.d3-graph .line.series-4 {
+  stroke: darkmagenta;
+  fill: none;
+}
+
+.d3-graph .area.temperature-d-custom-styling,
+.d3-graph .bar.temperature-d-custom-styling,
+.d3-graph .circle.temperature-d-custom-styling {
+  stroke: coral;
+  fill: lightpink;
+}
+
+.d3-graph .line.temperature-d-custom-styling {
+  stroke: coral;
+  fill: none;
 }
 
 .d3-graph .high-temperature-value,
@@ -69,6 +88,12 @@ body {
   fill: none;
   stroke: red;
   stroke-width: 1;
+}
+
+.d3-graph .low-temperature-custom-styling {
+  fill: none;
+  stroke: blue;
+  stroke-width: 2;
 }
 
 .d3-tooltip {
