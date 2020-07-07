@@ -41,7 +41,7 @@ const defaultGenericDataConfig =
 
 export default class D3Config {
   constructor({ genericDataConfig, dataConfig, thresholds } = { genericDataConfig: defaultGenericDataConfig, dataConfig: null, thresholds: [] }) {
-    this.genericDataConfig = genericDataConfig;
+    this.genericDataConfig = genericDataConfig ? genericDataConfig : defaultGenericDataConfig;
     this.dataConfig = dataConfig;
     this.thresholds = thresholds;
 
@@ -51,12 +51,18 @@ export default class D3Config {
   }
 
   isAreaChartTypePresentInConfig() {
-    if (this.genericDataConfig || this.genericDataConfig.chartTypes.some(c => c.chartType === chartTypes.area)) {
-      return true;
+    let result = false;
+    if (this.genericDataConfig && this.genericDataConfig.chartTypes.some(c => c.chartType === chartTypes.area)) {
+      result = true;
     }
-    if (this.dataConfig && this.dataConfig.some(c => c.chartType === chartTypes.area)) {
-      return true;
+    if (this.dataConfig) {
+      Object.keys(this.dataConfig).forEach(dataConfigKey => {
+        if (this.dataConfig[dataConfigKey].chartTypes.some(c => c.chartType === chartTypes.area)) {
+          result = true;
+        }
+      });
     }
+    return result;
   }
 
   height = 400;

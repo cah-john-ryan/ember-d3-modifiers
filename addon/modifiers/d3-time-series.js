@@ -346,7 +346,7 @@ export default class D3TimeSeriesModifier extends Modifier {
     this.tooltipElement.html(moment(selectedDateOnXaxis).format('MMMM DD, YYYY hh:mm A z'))
       .attr('class', 'd3-tooltip')
       .style('left', d3.event.pageX + 'px')
-      .style('top', d3.event.pageY - this.d3Config.margin.top - 20 + 'px')
+      .style('top', d3.event.pageY - this.d3Config.margin.top - 90 + 'px')
       .selectAll()
       .data(dataForSelectedDate)
       .enter()

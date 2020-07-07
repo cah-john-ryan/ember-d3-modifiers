@@ -7,93 +7,21 @@ body {
   line-height: 1.42857142857143;
 }
 
+.demo-selection {
+  display: flex;
+  flex-direction: row;
+}
+.demo-selection .left-hand-selection,
+.demo-selection .right-hand-selection {
+  flex-basis: 50%;
+}
+
 .d3-graph {
   position: relative;
 }
 
 .d3-graph svg {
   background-color: #f5f2f0;
-}
-
-.d3-graph .area.series-1,
-.d3-graph .bar.series-1,
-.d3-graph .circle.series-1 {
-  stroke: DarkBlue;
-  fill: CornflowerBlue;
-  /* config values that can also be overridden here in CSS
-    r: 10; // circle radius
-    width: 15px; // bar width
-    stroke-width: 5; 
-   */
-}
-
-.d3-graph .line.series-1 {
-  stroke: DarkBlue;
-  fill: none;
-  /* config values that can also be overridden here in CSS
-    stroke-width: 5; 
-   */
-}
-
-.d3-graph .area.series-2,
-.d3-graph .bar.series-2,
-.d3-graph .circle.series-2 {
-  stroke: black;
-  fill: darkgray;
-}
-
-.d3-graph .line.series-2 {
-  stroke: black;
-  fill: none;
-}
-
-.d3-graph .area.series-3,
-.d3-graph .bar.series-3,
-.d3-graph .circle.series-3 {
-  stroke: darkgreen;
-  fill: lightgreen;
-}
-
-.d3-graph .line.series-3 {
-  stroke: darkgreen;
-  fill: none;
-}
-
-.d3-graph .area.series-4,
-.d3-graph .bar.series-4,
-.d3-graph .circle.series-4 {
-  stroke: darkmagenta;
-  fill: violet;
-}
-
-.d3-graph .line.series-4 {
-  stroke: darkmagenta;
-  fill: none;
-}
-
-.d3-graph .area.temperature-d-custom-styling,
-.d3-graph .bar.temperature-d-custom-styling,
-.d3-graph .circle.temperature-d-custom-styling {
-  stroke: coral;
-  fill: lightpink;
-}
-
-.d3-graph .line.temperature-d-custom-styling {
-  stroke: coral;
-  fill: none;
-}
-
-.d3-graph .high-temperature-value,
-.d3-graph .low-temperature-value {
-  fill: none;
-  stroke: red;
-  stroke-width: 1;
-}
-
-.d3-graph .low-temperature-custom-styling {
-  fill: none;
-  stroke: blue;
-  stroke-width: 2;
 }
 
 .d3-tooltip {
@@ -106,4 +34,90 @@ body {
 
 .d3-tooltip-hidden {
   display: none;
+}
+
+/* Line chart demo CSS */
+.line-chart-demo.d3-graph .line.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: none;
+  /* config values that can also be overridden here in CSS for `.d3-graph .line`
+    stroke-width: 5; 
+   */
+}
+.line-chart-demo.d3-graph .line.temperature-b-custom-styling {
+  stroke: darkgreen;
+  fill: none;
+}
+
+/* Scatter plot demo CSS */
+.scatter-plot-demo.d3-graph .circle.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+  /* config values that can also be overridden here in CSS for `.d3-graph .circle`
+  stroke-width: 5;
+  r: 15;  // Circle radius
+   */
+}
+.scatter-plot-demo.d3-graph .circle.temperature-b-custom-styling {
+  stroke: darkgreen;
+  fill: none;
+}
+
+/* Bar chart demo CSS */
+.bar-chart-demo.d3-graph .bar.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+  /* config values that can also be overridden here in CSS for `.d3-graph .bar`
+  stroke-width: 3;
+  width: 7px;
+   */
+}
+
+/* Area chart demo CSS */
+.area-chart-demo.d3-graph .area.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+  /* config values that can also be overridden here in CSS for `.d3-graph .area`
+    stroke-width: 5; 
+   */
+}
+
+/* Combined line and scatter plot chart demo CSS */
+.line-with-circles-chart-demo.d3-graph .line.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: none;
+}
+.line-with-circles-chart-demo.d3-graph .circle.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+}
+
+/* Threshold lines demo CSS */
+.threshold-lines-demo.d3-graph .line.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: none;
+}
+.low-value-threshold,
+.high-value-threshold {
+  fill: none;
+  stroke: red;
+  stroke-width: 1;
+}
+
+/* Mixed chart types demo CSS */
+.mixed-chart-types-demo.d3-graph .area.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+}
+.mixed-chart-types-demo.d3-graph .circle.temperature-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+}
+.mixed-chart-types-demo.d3-graph .circle.temperature-b-custom-styling {
+  stroke: darkmagenta;
+  fill: none;
+}
+.mixed-chart-types-demo.d3-graph .line.temperature-c-custom-styling {
+  stroke: darkgreen;
+  fill: none;
 }

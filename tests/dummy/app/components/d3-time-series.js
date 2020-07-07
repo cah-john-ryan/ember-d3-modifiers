@@ -37,7 +37,6 @@ export default class D3TimeSeriesComponent extends Component {
   // d3Config = new D3Config();
 
   /*
-  TODO's:
   1. DONE: fix bar chart y axis (bug)
   2. DONE: fix area chart y axis (bug)
   3. SCRATCHED(NO): consolidate the sizing/width for the charttypes

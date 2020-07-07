@@ -1,5 +1,37 @@
-<h2 id="title">Welcome to Ember</h2>
+<h2 id="title">Ember D3 modifiers demo</h2>
 
-<D3TimeSeries></D3TimeSeries>
+{{!-- DONE: Add a dummy service to provide the fake --}}
+{{!-- TODO: Need a legend to callout the different data series --}}
+<div class="demo-selection">
+  <div class="left-hand-selection">
+    <div>
+      <LinkTo @route="line-chart-demo">Line chart demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="scatter-plot-demo">Scatter plot demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="bar-chart-demo">Bar chart demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="area-chart-demo">Area chart demo</LinkTo>
+    </div>
+  </div>
+
+  <div class="right-hand-selection">
+    <div>
+      <LinkTo @route="line-with-circles-chart-demo">Combined line and scatter plot chart demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="threshold-lines-demo">Threshold lines demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="mixed-chart-types-demo">Mixed chart types demo</LinkTo>
+    </div>
+  </div>
+
+</div>
+
+
 
 {{outlet}}
