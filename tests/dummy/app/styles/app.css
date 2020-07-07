@@ -93,7 +93,7 @@ body {
 }
 
 /* Threshold lines demo CSS */
-.threshold-lines-demo.d3-graph .line.temperature-a-custom-styling {
+.threshold-lines-demo .d3-graph .line.temperature-a-custom-styling {
   stroke: DarkBlue;
   fill: none;
 }

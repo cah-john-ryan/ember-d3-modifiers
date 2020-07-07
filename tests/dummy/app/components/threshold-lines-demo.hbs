@@ -1,4 +1,8 @@
-<div class="threshold-lines-demo d3-graph" {{d3-time-series 
-  chartData=this.chartData
-  d3Config=this.d3Config}}>
+<div class="threshold-lines-demo" {{did-insert this.setupConfig}}>
+  {{#if this.d3Config}}
+  <div class="d3-graph" {{d3-time-series 
+    chartData=this.chartData
+    d3Config=this.d3Config}}>
+  </div>
+  {{/if}}
 </div>
