@@ -1,5 +1,5 @@
-import D3Config from 'ember-d3-modifiers/objects/d3Config';
-import { chartTypes, LineConfig, BarConfig, AreaConfig, CircleConfig } from 'ember-d3-modifiers/objects/d3Config';
+import D3Config from 'ember-d3-modifiers/objects/d3-config';
+import { chartTypes, LineConfig, BarConfig, AreaConfig, CircleConfig } from 'ember-d3-modifiers/objects/d3-config';
 
 export {
   D3Config,

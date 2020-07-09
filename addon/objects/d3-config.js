@@ -38,7 +38,6 @@ const defaultGenericDataConfig =
   chartTypes: [new LineConfig({ lineWidth: 1, className: null })]
 }
 
-//TODO: Need config settings for the legend
 export default class D3Config {
   constructor({ genericDataConfig, dataConfig, thresholds } = { genericDataConfig: defaultGenericDataConfig, dataConfig: null, thresholds: [] }) {
 
@@ -76,9 +75,9 @@ export default class D3Config {
   // Properties that can be set ad-hoc should you want to override them.
 
   height = 400;
-  width = 900;
+  width = 1000;
   // For the bottom margin remember that the axis, axis title, and legend are rendered there.
-  margin = { top: 30, right: 30, bottom: 110, left: 60 };
+  margin = { top: 30, right: 160, bottom: 80, left: 60 };
   axis = {
     x: {
       title: 'Date',
@@ -87,19 +86,22 @@ export default class D3Config {
       // tickFormat: '%b %e, %I %p' // See: https://github.com/d3/d3-time-format
     },
     y: {
-      title: 'Temperature (°C)',
+      title: 'Value',
       titleOffsetInPixels: 35,
       tickCount: 10,
     }
   };
   tooltip = {
     enableVerticalLine: true,
+    xAxisOffsetFromMouseLocation: 0,
+    yAxisOffsetFromMouseLocation: -10,
     presentationFormatFunction: ({ seriesId, value }) => {
-      return `${seriesId}: ${value}`;
+      return `${seriesId}: ${value.toFixed(2)}`;
     }
   }
   legend = {
     visible: true,
-    yAxisOffsetInPixels: 80
+    yAxisOffsetInPixels: 80,
+    placement: 'right' // bottom, right
   }
 }

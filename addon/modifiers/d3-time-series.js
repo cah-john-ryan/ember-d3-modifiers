@@ -4,7 +4,7 @@ import { dasherize } from '@ember/string';
 import { action } from '@ember/object';
 import * as d3 from 'd3';
 import * as moment from 'moment';
-import { chartTypes } from 'ember-d3-modifiers/objects/d3Config';
+import { chartTypes } from 'ember-d3-modifiers';
 
 export default class D3TimeSeriesModifier extends Modifier {
   didReceiveArguments() {
@@ -187,8 +187,6 @@ export default class D3TimeSeriesModifier extends Modifier {
   @action
   renderData() {
     let seriesNumber = 1;
-    const renderingFunctions = this.getRenderingFunctions();
-
     this.seriesIdListing.forEach(seriesId => {
       const seriesData = this.chartData.filter(d => d.seriesId === seriesId);
       const seriesConfig = this.getDataConfig(seriesId);
@@ -196,7 +194,7 @@ export default class D3TimeSeriesModifier extends Modifier {
       seriesConfig.seriesNumber = seriesNumber;
 
       seriesConfig.chartTypes.forEach(chartConfig => {
-        const renderingFunctionForChart = renderingFunctions[chartConfig.chartType];
+        const renderingFunctionForChart = this.renderingFunctions[chartConfig.chartType];
         if (renderingFunctionForChart) {
           renderingFunctionForChart.call(this, seriesData, seriesConfig, chartConfig);
         }
@@ -217,7 +215,7 @@ export default class D3TimeSeriesModifier extends Modifier {
       this.d3Config.genericDataConfig;
   }
 
-  getRenderingFunctions() {
+  get renderingFunctions() {
     const renderingFunctions = {};
     renderingFunctions[chartTypes.line] = this.renderLineData;
     renderingFunctions[chartTypes.bar] = this.renderBarData;
@@ -313,6 +311,57 @@ export default class D3TimeSeriesModifier extends Modifier {
     if (!this.d3Config.legend.visible) {
       return;
     }
+    this.legendRenderingFunctions[this.d3Config.legend.placement].call(this);
+  }
+
+  get legendRenderingFunctions() {
+    return {
+      'bottom': this.renderLegendAtTheBottom,
+      'right': this.renderLegendOnTheRight
+    };
+  }
+
+  renderLegendOnTheRight() {
+    const self = this;
+
+    const legend = this.svgElement.append('g')
+      .attr('class', 'legend');
+
+    const lg = legend.selectAll('g')
+      .data(this.seriesIdListing)
+      .enter()
+      .append('g')
+      .attr('transform', (seriesId, i) => {
+        return `translate(0,${i * 20})`
+      });
+
+    lg.append('rect')
+      .attr('class', (seriesId, i) => {
+        const seriesConfig = self.getDataConfig(seriesId)
+        seriesConfig.seriesId = seriesId;
+        seriesConfig.seriesNumber = i + 1;
+        let firstChartConfig = seriesConfig.chartTypes[0];
+        return self.getClassesToApply(seriesConfig, firstChartConfig);
+      })
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 10)
+      .attr('height', 10)
+      .attr('stroke-width', 3);
+
+    lg.append('text')
+      .attr('x', 15)
+      .attr('y', 10)
+      .text(d => d);
+
+    let nodeHeight = (d) => d.getBBox().height;
+
+    legend.attr('transform', function () {
+      return `translate(${self.widthWithinMargins + 25}, ${(self.heightWithinMargins - nodeHeight(this)) / 2})`
+    });
+  }
+
+  renderLegendAtTheBottom() {
     // Pulled from https://bl.ocks.org/allyraza/dd42733443f03a372f6b19b4a9a648c0
     const self = this;
     const legend = this.svgElement.append('g')
@@ -398,8 +447,8 @@ export default class D3TimeSeriesModifier extends Modifier {
 
     this.tooltipElement.html(moment(selectedDateOnXaxis).format('MMMM DD, YYYY hh:mm A z'))
       .attr('class', 'd3-tooltip')
-      .style('left', d3.event.pageX + 'px')
-      .style('top', d3.event.pageY - this.d3Config.margin.top - 90 + 'px')
+      .style('left', d3.event.pageX + this.d3Config.tooltip.xAxisOffsetFromMouseLocation + 'px')
+      .style('top', d3.event.pageY - this.d3Config.margin.top + this.d3Config.tooltip.yAxisOffsetFromMouseLocation + 'px')
       .selectAll()
       .data(dataForSelectedDate)
       .enter()
