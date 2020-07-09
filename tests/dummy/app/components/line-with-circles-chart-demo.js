@@ -6,9 +6,10 @@ export default class LineWithCirclesChartDemoComponent extends Component {
   d3Config = new D3Config({
     dataConfig: {
       'Temperature A': {
+        className: 'temperature-a-custom-styling',
         chartTypes: [
-          new LineConfig({ lineWidth: 3, className: 'temperature-a-custom-styling' }),
-          new CircleConfig({ radius: 5, lineWidth: 2, className: 'temperature-a-custom-styling' })
+          new LineConfig({ lineWidth: 3 }),
+          new CircleConfig({ radius: 5, lineWidth: 2 })
         ]
       }
     }

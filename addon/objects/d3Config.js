@@ -6,28 +6,27 @@ const chartTypes = {
 };
 
 class LineConfig {
-  constructor({ lineWidth, className }) {
+  constructor({ lineWidth }) {
     this.chartType = chartTypes.line;
     this.lineWidth = lineWidth;
-    this.className = className;
   }
 }
 class BarConfig extends LineConfig {
-  constructor({ barWidth, lineWidth, className }) {
-    super({ lineWidth: lineWidth, className: className })
+  constructor({ barWidth, lineWidth }) {
+    super({ lineWidth: lineWidth })
     this.chartType = chartTypes.bar;
     this.barWidth = barWidth;
   }
 }
 class AreaConfig extends LineConfig {
-  constructor({ lineWidth, className }) {
-    super({ lineWidth: lineWidth, className: className })
+  constructor({ lineWidth }) {
+    super({ lineWidth: lineWidth })
     this.chartType = chartTypes.area;
   }
 }
 class CircleConfig extends LineConfig {
-  constructor({ radius, lineWidth, className }) {
-    super({ lineWidth: lineWidth, className: className })
+  constructor({ radius, lineWidth }) {
+    super({ lineWidth: lineWidth })
     this.chartType = chartTypes.circle;
     this.radius = radius;
   }
@@ -39,18 +38,27 @@ const defaultGenericDataConfig =
   chartTypes: [new LineConfig({ lineWidth: 1, className: null })]
 }
 
+//TODO: Need config settings for the legend
 export default class D3Config {
   constructor({ genericDataConfig, dataConfig, thresholds } = { genericDataConfig: defaultGenericDataConfig, dataConfig: null, thresholds: [] }) {
+
+    /** @member {object} The default chart configuration to be used in the event that the given
+    seriesId is not registered in dataConfig */
     this.genericDataConfig = genericDataConfig ? genericDataConfig : defaultGenericDataConfig;
+
+    /** @member {object} A hash of seriesId's with their associated chartConfigs */
     this.dataConfig = dataConfig;
+
+    /** @member {Array.} Threshold lines to be rendered
+     * The data structure should have three properties: thresholdId, value, and className */
     this.thresholds = thresholds;
 
-    if (this.isAreaChartTypePresentInConfig()) {
+    if (this.isAreaChartTypePresentInDataConfig()) {
       this.startYaxisAtZero = true;
     }
   }
 
-  isAreaChartTypePresentInConfig() {
+  isAreaChartTypePresentInDataConfig() {
     let result = false;
     if (this.genericDataConfig && this.genericDataConfig.chartTypes.some(c => c.chartType === chartTypes.area)) {
       result = true;
@@ -65,13 +73,16 @@ export default class D3Config {
     return result;
   }
 
+  // Properties that can be set ad-hoc should you want to override them.
+
   height = 400;
   width = 900;
-  margin = { top: 30, right: 30, bottom: 70, left: 50 };
+  // For the bottom margin remember that the axis, axis title, and legend are rendered there.
+  margin = { top: 30, right: 30, bottom: 110, left: 60 };
   axis = {
     x: {
       title: 'Date',
-      titleOffsetInPixels: 60,
+      titleOffsetInPixels: 65,
       tickCount: 16,
       // tickFormat: '%b %e, %I %p' // See: https://github.com/d3/d3-time-format
     },
@@ -87,63 +98,8 @@ export default class D3Config {
       return `${seriesId}: ${value}`;
     }
   }
+  legend = {
+    visible: true,
+    yAxisOffsetInPixels: 80
+  }
 }
-
-  // d3Config = {
-  //   height: 400,
-  //   width: 900,
-  //   margin: { top: 30, right: 30, bottom: 50, left: 50 },
-  //   axis: {
-  //     x: {
-  //       title: 'Date',
-  //       tickCount: 16
-  //     },
-  //     y: {
-  //       title: 'Temperature (°C)',
-  //       tickCount: 10,
-  //     }
-  //   },
-  //   // startYaxisAtZero: true,
-  //   defaultDataConfig: {
-  //     chartType: 'line',
-  //     circleSize: 3,
-  //     lineWidth: 2,
-  //     barWidth: 10
-  //   },
-  //   // dataConfig: {
-  //   //   'Temperature A': {
-  //   //     chartTypes: {
-  //   //       type: 'area',
-  //   //       size: 2
-  //   //     }
-  //   //   },
-  //   //   'Temperature B': {
-  //   //     chartTypes: {
-  //   //       type: 'area',
-  //   //       size: 2
-  //   //     }
-  //   //   },
-  //   //   'Temperature C': {
-  //   //     chartTypes: [{
-  //   //       type: 'circle',
-  //   //       size: 2
-  //   //     },
-  //   //     {
-  //   //       type: 'line',
-  //   //       size: 1
-  //   //     }]
-  //   //   }
-  //   // },
-  //   dataConfig: {
-  //     'Temperature A': {
-  //       chartType: 'line',
-  //       circleSize: 5,
-  //       lineWidth: 2,
-  //       barWidth: 10
-  //     }
-  //   },
-  //   thresholds: [
-  //     { thresholdId: 'High Temperature Value', value: 6 },
-  //     { thresholdId: 'Low Temperature Value', value: 2 }
-  //   ]
-  // };

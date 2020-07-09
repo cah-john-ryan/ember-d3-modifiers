@@ -7,8 +7,9 @@ export default class BarChartDemoComponent extends Component {
   d3Config = new D3Config({
     dataConfig: {
       'Temperature A': {
+        className: 'temperature-a-custom-styling',
         chartTypes: [
-          new BarConfig({ barWidth: 13, lineWidth: 2, className: 'temperature-a-custom-styling' })
+          new BarConfig({ barWidth: 13, lineWidth: 2 })
         ]
       }
     }

@@ -12,8 +12,9 @@ export default class ThresholdLinesDemoComponent extends Component {
     this.d3Config = new D3Config({
       dataConfig: {
         'Temperature A': {
+          className: 'temperature-a-custom-styling',
           chartTypes: [
-            new LineConfig({ lineWidth: 3, className: 'temperature-a-custom-styling' })
+            new LineConfig({ lineWidth: 3 })
           ]
         }
       },

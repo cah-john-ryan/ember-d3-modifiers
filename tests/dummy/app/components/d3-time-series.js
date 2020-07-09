@@ -7,7 +7,7 @@ export default class D3TimeSeriesComponent extends Component {
   d3Config = new D3Config({
     genericDataConfig: {
       chartTypes: [
-        new CircleConfig({ radius: 4, lineWidth: 1, className: null })
+        new CircleConfig({ radius: 4, lineWidth: 1 })
       ]
     },
     dataConfig: {
@@ -23,8 +23,9 @@ export default class D3TimeSeriesComponent extends Component {
         ]
       },
       'Temperature D': {
+        className: 'temperature-d-custom-styling',
         chartTypes: [
-          new LineConfig({ lineWidth: 4, className: 'temperature-d-custom-styling' })
+          new LineConfig({ lineWidth: 4 })
         ]
       }
     },

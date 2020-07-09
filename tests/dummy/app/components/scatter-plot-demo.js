@@ -6,13 +6,15 @@ export default class ScatterPlotDemoComponent extends Component {
   d3Config = new D3Config({
     dataConfig: {
       'Temperature A': {
+        className: 'temperature-a-custom-styling',
         chartTypes: [
-          new CircleConfig({ radius: 8, lineWidth: 2, className: 'temperature-a-custom-styling' })
+          new CircleConfig({ radius: 8, lineWidth: 2 })
         ]
       },
       'Temperature B': {
+        className: 'temperature-b-custom-styling',
         chartTypes: [
-          new CircleConfig({ radius: 6, lineWidth: 3, className: 'temperature-b-custom-styling' })
+          new CircleConfig({ radius: 6, lineWidth: 3 })
         ]
       }
     }

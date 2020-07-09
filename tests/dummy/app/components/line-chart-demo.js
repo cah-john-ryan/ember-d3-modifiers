@@ -6,13 +6,15 @@ export default class LineChartDemoComponent extends Component {
   d3Config = new D3Config({
     dataConfig: {
       'Temperature A': {
+        className: 'temperature-a-custom-styling',
         chartTypes: [
-          new LineConfig({ lineWidth: 3, className: 'temperature-a-custom-styling' })
+          new LineConfig({ lineWidth: 3 })
         ]
       },
       'Temperature B': {
+        className: 'temperature-b-custom-styling',
         chartTypes: [
-          new LineConfig({ lineWidth: 5, className: 'temperature-b-custom-styling' })
+          new LineConfig({ lineWidth: 5 })
         ]
       }
     }

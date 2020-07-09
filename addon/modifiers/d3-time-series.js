@@ -12,8 +12,7 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   /** @member {Array.} The source data that is to be rendered
-   * The data structure should have three properties: seriesId, date, and value
-   */
+   * The data structure should have three properties: seriesId, date, and value */
   @tracked chartData = this.args.named.chartData;
 
   /** @member {object} The configuration settings to drive how the chart data should be rendered */
@@ -49,7 +48,7 @@ export default class D3TimeSeriesModifier extends Modifier {
   /** @member {object} A vertical line indicator to show the date currently selected by the location of the mouse */
   tooltipVerticalLine;
 
-  /** @member {object} A div tag that is the tooltip that is updated based on mouse movement within svg d3 chart */
+  /** @member {object} A div tag for the tooltip that is updated based on mouse movement within tooltipBoxOverlay */
   tooltipElement;
 
   /** @member {Array.} All date values in the source data to help with xAxis mapping in the tooltip placement logic */
@@ -66,6 +65,7 @@ export default class D3TimeSeriesModifier extends Modifier {
     this.getValueOnYaxis = this.yScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
     this.renderXandYaxis();
     this.renderAxisLabels();
+    this.renderLegend();
 
     this.renderData();
 
@@ -84,10 +84,10 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   assessChartDataProvided() {
-    return this.chartData.reduce((currentValues, temperatureReading) => {
-      currentValues.minDate = currentValues.minDate > temperatureReading.date ? temperatureReading.date : currentValues.minDate;
-      currentValues.maxDate = currentValues.maxDate < temperatureReading.date ? temperatureReading.date : currentValues.maxDate;
-      currentValues.setOfXvalues.add(temperatureReading.date);
+    return this.chartData.reduce((currentValues, chartElement) => {
+      currentValues.minDate = currentValues.minDate > chartElement.date ? chartElement.date : currentValues.minDate;
+      currentValues.maxDate = currentValues.maxDate < chartElement.date ? chartElement.date : currentValues.maxDate;
+      currentValues.setOfXvalues.add(chartElement.date);
       return currentValues;
     }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date, setOfXvalues: new Set() });
   }
@@ -189,16 +189,16 @@ export default class D3TimeSeriesModifier extends Modifier {
     let seriesNumber = 1;
     const renderingFunctions = this.getRenderingFunctions();
 
-    this.getSeriesIdListing(this.chartData).forEach(seriesId => {
+    this.seriesIdListing.forEach(seriesId => {
       const seriesData = this.chartData.filter(d => d.seriesId === seriesId);
-      const dataConfigForSeries = this.d3Config.dataConfig && this.d3Config.dataConfig[seriesId] ?
-        this.d3Config.dataConfig[seriesId] :
-        this.d3Config.genericDataConfig;
+      const seriesConfig = this.getDataConfig(seriesId);
+      seriesConfig.seriesId = seriesId;
+      seriesConfig.seriesNumber = seriesNumber;
 
-      dataConfigForSeries.chartTypes.forEach(chartTypeToRender => {
-        const renderingFunctionForChart = renderingFunctions[chartTypeToRender.chartType];
+      seriesConfig.chartTypes.forEach(chartConfig => {
+        const renderingFunctionForChart = renderingFunctions[chartConfig.chartType];
         if (renderingFunctionForChart) {
-          renderingFunctionForChart.call(this, seriesId, seriesNumber, seriesData, chartTypeToRender);
+          renderingFunctionForChart.call(this, seriesData, seriesConfig, chartConfig);
         }
       });
 
@@ -206,9 +206,15 @@ export default class D3TimeSeriesModifier extends Modifier {
     });
   }
 
-  getSeriesIdListing() {
+  get seriesIdListing() {
     const seriesIdSet = this.chartData.reduce((listing, temperatureReading) => listing.add(temperatureReading.seriesId), new Set());
-    return Array.from(seriesIdSet);
+    return Array.from(seriesIdSet).sort();
+  }
+
+  getDataConfig(seriesId) {
+    return this.d3Config.dataConfig && this.d3Config.dataConfig[seriesId] ?
+      this.d3Config.dataConfig[seriesId] :
+      this.d3Config.genericDataConfig;
   }
 
   getRenderingFunctions() {
@@ -220,58 +226,58 @@ export default class D3TimeSeriesModifier extends Modifier {
     return renderingFunctions;
   }
 
-  renderLineData(seriesId, seriesNumber, seriesData, dataConfig) {
+  renderLineData(seriesData, seriesConfig, chartConfig) {
     this.svgElement.append('path')
       .datum(seriesData)
-      .attr('class', this.getClassesToApply(chartTypes.line, dataConfig, seriesNumber, seriesId))
+      .attr('class', this.getClassesToApply(seriesConfig, chartConfig))
       .attr('fill', 'none')
       .attr('stroke', 'black')
-      .attr('stroke-width', dataConfig.lineWidth)
+      .attr('stroke-width', chartConfig.lineWidth)
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('d', this.lineGenerator());
   }
 
-  renderBarData(seriesId, seriesNumber, seriesData, dataConfig) {
+  renderBarData(seriesData, seriesConfig, chartConfig) {
     this.svgElement.selectAll('whatever')
       .data(seriesData)
       .enter()
       .append('rect')
-      .attr('class', this.getClassesToApply(chartTypes.bar, dataConfig, seriesNumber, seriesId))
+      .attr('class', this.getClassesToApply(seriesConfig, chartConfig))
       .attr('x', d => this.getValueOnXaxis(d.date))
       .attr('y', d => this.getValueOnYaxis(d.value))
       .attr('stroke', 'black')
-      .attr('stroke-width', dataConfig.lineWidth)
-      .attr('width', dataConfig.barWidth)
+      .attr('stroke-width', chartConfig.lineWidth)
+      .attr('width', chartConfig.barWidth)
       .attr('height', d => this.heightWithinMargins - this.getValueOnYaxis(d.value));
   }
 
-  renderAreaData(seriesId, seriesNumber, seriesData, dataConfig) {
+  renderAreaData(seriesData, seriesConfig, chartConfig) {
     this.svgElement.append('path')
       .datum(seriesData)
-      .attr('class', this.getClassesToApply(chartTypes.area, dataConfig, seriesNumber, seriesId))
+      .attr('class', this.getClassesToApply(seriesConfig, chartConfig))
       .attr('stroke', 'black')
-      .attr('stroke-width', dataConfig.lineWidth)
+      .attr('stroke-width', chartConfig.lineWidth)
       .attr('d', this.areaGenerator());
   }
 
-  renderCircleData(seriesId, seriesNumber, seriesData, dataConfig) {
+  renderCircleData(seriesData, seriesConfig, chartConfig) {
     this.svgElement.selectAll('whatever')
       .data(seriesData)
       .enter()
       .append('circle')
-      .attr('class', this.getClassesToApply(chartTypes.circle, dataConfig, seriesNumber, seriesId))
+      .attr('class', this.getClassesToApply(seriesConfig, chartConfig))
       .attr('stroke', 'black')
-      .attr('stroke-width', dataConfig.lineWidth)
+      .attr('stroke-width', chartConfig.lineWidth)
       .attr('cx', d => this.getValueOnXaxis(d.date))
       .attr('cy', d => this.getValueOnYaxis(d.value))
-      .attr('r', dataConfig.radius);
+      .attr('r', chartConfig.radius);
   }
 
-  getClassesToApply(seriesType, dataConfig, seriesNumber, seriesId) {
-    return dataConfig.className ?
-      `${seriesType} series-${seriesNumber} ${dasherize(seriesId)} ${dataConfig.className}` :
-      `${seriesType}  series-${seriesNumber} ${dasherize(seriesId)}`;
+  getClassesToApply(seriesConfig, chartConfig) {
+    return seriesConfig.className ?
+      `${chartConfig.chartType} series-${seriesConfig.seriesNumber} ${dasherize(seriesConfig.seriesId)} ${seriesConfig.className}` :
+      `${chartConfig.chartType} series-${seriesConfig.seriesNumber} ${dasherize(seriesConfig.seriesId)}`;
   }
 
   renderThresholdLines(thresholdSeriesData) {
@@ -301,6 +307,53 @@ export default class D3TimeSeriesModifier extends Modifier {
       .attr('x', 0 - (this.heightWithinMargins / 2))
       .style('text-anchor', 'middle')
       .text(this.d3Config.axis.y.title);
+  }
+
+  renderLegend() {
+    if (!this.d3Config.legend.visible) {
+      return;
+    }
+    // Pulled from https://bl.ocks.org/allyraza/dd42733443f03a372f6b19b4a9a648c0
+    const self = this;
+    const legend = this.svgElement.append('g')
+      .attr('class', 'legend')
+      .attr('transform', 'translate(0,0)');
+
+    const lg = legend.selectAll('g')
+      .data(this.seriesIdListing)
+      .enter()
+      .append('g');
+
+    lg.append('rect')
+      .attr('class', function (seriesId, i) {
+        const seriesConfig = self.getDataConfig(seriesId)
+        seriesConfig.seriesId = seriesId;
+        seriesConfig.seriesNumber = i + 1;
+        let firstChartConfig = seriesConfig.chartTypes[0];
+        return self.getClassesToApply(seriesConfig, firstChartConfig);
+      })
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 10)
+      .attr('height', 10)
+      .attr('stroke-width', 3);
+
+    lg.append('text')
+      .attr('x', 15)
+      .attr('y', 10)
+      .text(d => d);
+
+    let nodeWidth = (d) => d.getBBox().width;
+    let offset = 0;
+    lg.attr('transform', function () {
+      let x = offset;
+      offset += nodeWidth(this) + 10;
+      return `translate(${x},${self.heightWithinMargins + self.d3Config.legend.yAxisOffsetInPixels})`;
+    });
+
+    legend.attr('transform', function () {
+      return `translate(${(self.widthWithinMargins - nodeWidth(this)) / 2},${0})`
+    });
   }
 
   renderTooltipElementsWithMouseEvents() {

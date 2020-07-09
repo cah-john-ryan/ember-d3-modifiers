@@ -6,8 +6,9 @@ export default class AreaChartDemoComponent extends Component {
   d3Config = new D3Config({
     dataConfig: {
       'Temperature A': {
+        className: 'temperature-a-custom-styling',
         chartTypes: [
-          new AreaConfig({ lineWidth: 2, className: 'temperature-a-custom-styling' })
+          new AreaConfig({ lineWidth: 2 })
         ]
       }
     }

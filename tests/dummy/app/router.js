@@ -14,4 +14,5 @@ Router.map(function() {
   this.route('line-with-circles-chart-demo');
   this.route('threshold-lines-demo');
   this.route('mixed-chart-types-demo');
+  this.route('initial-demo');
 });

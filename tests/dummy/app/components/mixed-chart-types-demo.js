@@ -6,19 +6,22 @@ export default class MixedChartTypesDemoComponent extends Component {
   d3Config = new D3Config({
     dataConfig: {
       'Temperature A': {
+        className: 'temperature-a-custom-styling',
         chartTypes: [
-          new AreaConfig({ lineWidth: 3, className: 'temperature-a-custom-styling' }),
-          new CircleConfig({ radius: 3, lineWidth: 1, className: 'temperature-a-custom-styling' })
+          new AreaConfig({ lineWidth: 3 }),
+          new CircleConfig({ radius: 3, lineWidth: 1 })
         ]
       },
       'Temperature B': {
+        className: 'temperature-b-custom-styling',
         chartTypes: [
-          new CircleConfig({ radius: 5, lineWidth: 3, className: 'temperature-b-custom-styling' })
+          new CircleConfig({ radius: 5, lineWidth: 3 })
         ]
       },
       'Temperature C': {
+        className: 'temperature-c-custom-styling',
         chartTypes: [
-          new LineConfig({ lineWidth: 3, className: 'temperature-c-custom-styling' })
+          new LineConfig({ lineWidth: 3 })
         ]
       }
     },
