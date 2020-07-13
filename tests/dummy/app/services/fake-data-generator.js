@@ -1,5 +1,5 @@
 import Service from '@ember/service';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export default class FakeDataGeneratorService extends Service {
   generateFakeTimeSeriesData({ fakeSeriesIds, numberOfHoursAgo }) {

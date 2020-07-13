@@ -2,14 +2,28 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
+import moment from 'moment';
+import { D3Config } from 'ember-d3-modifiers';
+import { create, isPresent } from 'ember-cli-page-object';
 
-module('Integration | Modifier | d3-generic-series', function(hooks) {
+const page = create({
+  svgLineIsPresent: isPresent('svg path.line')
+});
+
+module('Integration | Modifier | d3-generic-series', function (hooks) {
   setupRenderingTest(hooks);
 
-  // Replace this with your real tests.
-  test('it renders', async function(assert) {
-    await render(hbs`<div {{d3-generic-series}}></div>`);
+  test('it renders a simple line', async function (assert) {
+    this.chartData = [
+      { seriesId: 'fakeSeriesId', date: moment().add(-1, 'hour').toDate(), value: 1 },
+      { seriesId: 'fakeSeriesId', date: moment().toDate(), value: 2 }
+    ];
+    this.d3Config = new D3Config();
 
-    assert.ok(true);
+    await render(hbs`<div {{d3-generic-series 
+      chartData=this.chartData
+      d3Config=this.d3Config}}></div>`);
+
+    assert.ok(page.svgLineIsPresent);
   });
 });

@@ -1,5 +1,5 @@
 import { LineConfig } from 'ember-d3-modifiers/objects/d3-config-generators';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export {
   chartTypes,

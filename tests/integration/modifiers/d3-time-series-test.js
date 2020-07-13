@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import * as moment from 'moment';
+import moment from 'moment';
 import { D3Config } from 'ember-d3-modifiers';
 import { create, isPresent } from 'ember-cli-page-object';
 
@@ -20,7 +20,7 @@ module('Integration | Modifier | d3-time-series', function (hooks) {
     ];
     this.d3Config = new D3Config();
 
-    await render(hbs`<div data-test-d3-time-series {{d3-time-series 
+    await render(hbs`<div {{d3-time-series 
       chartData=this.chartData
       d3Config=this.d3Config}}></div>`);
 
