@@ -57,15 +57,14 @@ Object.assign(tempTimeSeriesAxisConfig.y, defaultAxisConfig.y, { title: 'Value' 
 const defaultTimeSeriesAxisConfig = tempTimeSeriesAxisConfig;
 
 const defaultLegendConfig = {
-  visible: true,
   yAxisOffsetInPixels: 80,
-  placement: 'right' // 'bottom', 'right'
+  placement: 'right' // 'bottom', 'right', 'none'
 };
 
 const defaultTooltipConfig = {
   enableVerticalLine: true,
   xAxisOffsetFromMouseLocation: 0,
-  yAxisOffsetFromMouseLocation: -10,
+  yAxisOffsetFromMouseLocation: -50,
   titlePresentationFormatFunction: (selectedXValue) => {
     return `Selected value: ${selectedXValue}`;
   },
@@ -75,8 +74,8 @@ const defaultTooltipConfig = {
 };
 
 const defaultTimeSeriesTooltipConfig = Object.assign({}, defaultTooltipConfig, {
-  titlePresentationFormatFunction: (selectedXValue) => {
-    return moment(selectedXValue).format('MMMM DD, YYYY hh:mm A z');
+  titlePresentationFormatFunction: (selectedDate) => {
+    return moment(selectedDate).format('MMMM DD, YYYY hh:mm A z');
   },
   presentationFormatFunction: ({ seriesId, value }) => {
     return `${seriesId}: ${value.toFixed(2)}`;

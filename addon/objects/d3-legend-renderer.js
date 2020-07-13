@@ -17,7 +17,7 @@ export default class D3LegendRenderer {
   }
 
   renderLegend(seriesIdListing) {
-    if (!this.d3Config.legend.visible || !this.d3Config.legend.placement) {
+    if (!this.d3Config.legend.placement || this.d3Config.legend.placement === 'none') {
       return;
     }
     this.legendRenderingFunctions[this.d3Config.legend.placement].call(this,
