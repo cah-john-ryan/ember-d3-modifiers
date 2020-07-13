@@ -1,0 +1,38 @@
+<h2 id="title">Ember D3 modifiers demo</h2>
+<h3>Time series (the x axis is date based)</h3>
+{{outlet}}
+<div class="demo-selection">
+  <div class="left-hand-selection">
+    <div>
+      <LinkTo @route="time-series.line-chart-demo">Line chart demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="time-series.scatter-plot-demo">Scatter plot demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="time-series.bar-chart-demo">Bar chart demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="time-series.area-chart-demo">Area chart demo</LinkTo>
+    </div>
+  </div>
+
+  <div class="right-hand-selection">
+    <div>
+      <LinkTo @route="time-series.line-with-circles-chart-demo">Combined line and scatter plot chart demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="time-series.threshold-lines-demo">Threshold lines demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="time-series.mixed-chart-types-demo">Mixed chart types demo</LinkTo>
+    </div>
+    <div>
+      <LinkTo @route="time-series.custom-layout-demo">Customized layout demo</LinkTo>
+    </div>
+  </div>
+</div>
+<hr>
+<div>
+  <LinkTo @route="generic-series.line-chart-demo">See generic demos</LinkTo>
+</div>

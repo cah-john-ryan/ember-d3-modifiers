@@ -12,6 +12,16 @@ export default class FakeDataGeneratorService extends Service {
     return chartDataToRender;
   }
 
+  generateFakeGenericSeriesData({ fakeSeriesIds, numberOfIterations }) {
+    let chartDataToRender = [];
+    fakeSeriesIds.forEach(fakeSeriesId => {
+      let fakeGenericSeries = this.generateFakeGenericSeries(fakeSeriesId, 1, numberOfIterations);
+      chartDataToRender.push(...fakeGenericSeries);
+    });
+    return chartDataToRender;
+  }
+
+  // Taken from https://observablehq.com/@sdaas/d3-timeseries
   generateFakeTimeSeries(fakeSeriesId, seedTime, numberOfHoursAgo) {
     let data = [];
     let d = seedTime;
@@ -23,8 +33,23 @@ export default class FakeDataGeneratorService extends Service {
         date: d.toDate(),
         value: v
       });
-
       d = d.add(1, 'hour');
+    }
+    return data;
+  }
+
+  generateFakeGenericSeries(fakeSeriesId, seedValue, numberOfIterations) {
+    let data = [];
+    let x = seedValue;
+    for (let i = 0, y = 4; i < numberOfIterations; ++i) {
+      y += Math.random() - 0.5;
+      y = i === 0 ? 4 : Math.max(Math.min(y, 8), 0);
+      data.push({
+        seriesId: fakeSeriesId,
+        xValue: x,
+        yValue: y
+      });
+      x++;
     }
     return data;
   }

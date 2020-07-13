@@ -23,7 +23,7 @@ export default class D3TimeSeriesComponent extends Component {
         ]
       },
       'Temperature D': {
-        className: 'temperature-d-custom-styling',
+        className: 'series-d-custom-styling',
         chartTypes: [
           new LineConfig({ lineWidth: 4 })
         ]

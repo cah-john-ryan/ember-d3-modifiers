@@ -36,21 +36,30 @@ body {
   display: none;
 }
 
+.d3-tooltip-header {
+  font-weight: 800;
+}
+
 /* Line chart demo CSS */
-.line-chart-demo.d3-graph .line.temperature-a-custom-styling {
+.line-chart-demo.d3-graph .line.series-a-custom-styling {
   stroke: DarkBlue;
   fill: none;
   /* config values that can also be overridden here in CSS for `.d3-graph .line`
     stroke-width: 5; 
    */
 }
-.line-chart-demo.d3-graph .line.temperature-b-custom-styling {
+.line-chart-demo.d3-graph path.line.series-a-custom-styling {
+  /* To apply a dashed styling to the path element for the line (and not the legend) */
+  stroke-dasharray: 6, 9;
+}
+
+.line-chart-demo.d3-graph .line.series-b-custom-styling {
   stroke: darkgreen;
   fill: none;
 }
 
 /* Scatter plot demo CSS */
-.scatter-plot-demo.d3-graph .circle.temperature-a-custom-styling {
+.scatter-plot-demo.d3-graph .circle.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
   /* config values that can also be overridden here in CSS for `.d3-graph .circle`
@@ -58,13 +67,13 @@ body {
   r: 15;  // Circle radius
    */
 }
-.scatter-plot-demo.d3-graph .circle.temperature-b-custom-styling {
+.scatter-plot-demo.d3-graph .circle.series-b-custom-styling {
   stroke: darkgreen;
   fill: none;
 }
 
 /* Bar chart demo CSS */
-.bar-chart-demo.d3-graph .bar.temperature-a-custom-styling {
+.bar-chart-demo.d3-graph .bar.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
   /* config values that can also be overridden here in CSS for `.d3-graph .bar`
@@ -74,7 +83,7 @@ body {
 }
 
 /* Area chart demo CSS */
-.area-chart-demo.d3-graph .area.temperature-a-custom-styling {
+.area-chart-demo.d3-graph .area.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
   /* config values that can also be overridden here in CSS for `.d3-graph .area`
@@ -83,17 +92,17 @@ body {
 }
 
 /* Combined line and scatter plot chart demo CSS */
-.line-with-circles-chart-demo.d3-graph .line.temperature-a-custom-styling {
+.line-with-circles-chart-demo.d3-graph .line.series-a-custom-styling {
   stroke: DarkBlue;
   fill: none;
 }
-.line-with-circles-chart-demo.d3-graph .circle.temperature-a-custom-styling {
+.line-with-circles-chart-demo.d3-graph .circle.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
 }
 
 /* Threshold lines demo CSS */
-.threshold-lines-demo .d3-graph .line.temperature-a-custom-styling {
+.threshold-lines-demo .d3-graph .line.series-a-custom-styling {
   stroke: DarkBlue;
   fill: none;
 }
@@ -105,19 +114,36 @@ body {
 }
 
 /* Mixed chart types demo CSS */
-.mixed-chart-types-demo.d3-graph .area.temperature-a-custom-styling {
+.mixed-chart-types-demo.d3-graph .area.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
 }
-.mixed-chart-types-demo.d3-graph .circle.temperature-a-custom-styling {
+.mixed-chart-types-demo.d3-graph .circle.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
 }
-.mixed-chart-types-demo.d3-graph .circle.temperature-b-custom-styling {
+.mixed-chart-types-demo.d3-graph .circle.series-b-custom-styling {
   stroke: darkmagenta;
   fill: none;
 }
-.mixed-chart-types-demo.d3-graph .line.temperature-c-custom-styling {
+.mixed-chart-types-demo.d3-graph .line.series-c-custom-styling {
+  stroke: darkgreen;
+  fill: none;
+}
+
+/* Custom Layout demo CSS */
+.custom-layout-demo.d3-graph .line.series-a-custom-styling {
+  stroke: DarkBlue;
+  fill: none;
+  /* config values that can also be overridden here in CSS for `.d3-graph .line`
+    stroke-width: 5; 
+   */
+}
+.custom-layout-demo.d3-graph path.line.series-a-custom-styling {
+  /* To apply a dashed styling to the path element for the line (and not the legend) */
+  stroke-dasharray: 6, 9;
+}
+.custom-layout-demo.d3-graph .line.series-b-custom-styling {
   stroke: darkgreen;
   fill: none;
 }
@@ -179,14 +205,14 @@ body {
   fill: none;
 }
 
-.initial-demo.d3-graph .area.temperature-d-custom-styling,
-.initial-demo.d3-graph .bar.temperature-d-custom-styling,
-.initial-demo.d3-graph .circle.temperature-d-custom-styling {
+.initial-demo.d3-graph .area.series-d-custom-styling,
+.initial-demo.d3-graph .bar.series-d-custom-styling,
+.initial-demo.d3-graph .circle.series-d-custom-styling {
   stroke: coral;
   fill: lightpink;
 }
 
-.initial-demo.d3-graph .line.temperature-d-custom-styling {
+.initial-demo.d3-graph .line.series-d-custom-styling {
   stroke: coral;
   fill: none;
 }

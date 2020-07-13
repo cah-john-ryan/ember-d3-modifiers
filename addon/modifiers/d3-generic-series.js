@@ -7,7 +7,8 @@ import D3SeriesRenderer from 'ember-d3-modifiers/objects/d3-series-renderer';
 import D3TooltipRenderer from 'ember-d3-modifiers/objects/d3-tooltip-renderer';
 import D3AxisRenderer from 'ember-d3-modifiers/objects/d3-axis-renderer';
 
-export default class D3TimeSeriesModifier extends Modifier {
+//TODO: Need to square this away
+export default class D3GenericSeriesModifier extends Modifier {
   didReceiveArguments() {
     this.d3SeriesRenderer = new D3SeriesRenderer();
     this.d3LegendRenderer = new D3LegendRenderer();
@@ -17,7 +18,7 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   /** @member {Array.} The source data that is to be rendered
-   * The data structure should have three properties: seriesId, date, and value */
+   * The data structure should have three properties: seriesId, xValue, and yValue */
   @tracked chartData = this.args.named.chartData;
 
   /** @member {object} The configuration settings to drive how the chart data should be rendered */
@@ -41,16 +42,16 @@ export default class D3TimeSeriesModifier extends Modifier {
   getValueOnYaxis;
 
   /** @member {Array.} All date values in the source data to help with xAxis mapping in the tooltip placement logic */
-  @tracked allDateValues = [];
+  @tracked allXvalues = [];
 
   loadD3Chart() {
     this.svgElement = this.createSvg();
     this.d3LegendRenderer.d3SvgElement = this.svgElement;
 
 
-    const { minDate, maxDate, setOfXvalues } = this.assessChartDataProvided();
-    const thresholdSeriesData = this.thresholdLines(minDate, maxDate);
-    this.allDateValues = Array.from(setOfXvalues).sort((a, b) => a.getTime() > b.getTime());
+    const { minXvalue, maxXvalue, setOfXvalues } = this.assessChartDataProvided();
+    const thresholdSeriesData = this.thresholdLines(minXvalue, maxXvalue);
+    this.allXvalues = Array.from(setOfXvalues).sort((a, b) => Number(a) > Number(b));
 
     this.getValueOnXaxis = this.xScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
     this.getValueOnYaxis = this.yScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
@@ -87,7 +88,7 @@ export default class D3TimeSeriesModifier extends Modifier {
       svgElement: this.svgElement,
       chartData: this.chartData,
       d3Config: this.d3Config,
-      allXvalues: this.allDateValues,
+      allXvalues: this.allXvalues,
       getValueOnXaxis: this.getValueOnXaxis,
     })
       .renderTooltipElementsWithMouseEvents(this.element);
@@ -104,14 +105,14 @@ export default class D3TimeSeriesModifier extends Modifier {
 
   assessChartDataProvided() {
     return this.chartData.reduce((currentValues, chartElement) => {
-      currentValues.minDate = currentValues.minDate > chartElement.date ? chartElement.date : currentValues.minDate;
-      currentValues.maxDate = currentValues.maxDate < chartElement.date ? chartElement.date : currentValues.maxDate;
-      currentValues.setOfXvalues.add(chartElement.date);
+      currentValues.minXvalue = currentValues.minXvalue > chartElement.xValue ? chartElement.xValue : currentValues.minXvalue;
+      currentValues.maxXvalue = currentValues.maxXvalue < chartElement.xValue ? chartElement.xValue : currentValues.maxXvalue;
+      currentValues.setOfXvalues.add(chartElement.xValue);
       return currentValues;
-    }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date, setOfXvalues: new Set() });
+    }, { minXvalue: this.chartData[0].xValue, maxXvalue: this.chartData[0].xValue, setOfXvalues: new Set() });
   }
 
-  thresholdLines(minDate, maxDate) {
+  thresholdLines(minXvalue, maxXvalue) {
     let thresholdSeriesData = [];
     if (this.d3Config.thresholds && this.d3Config.thresholds.length > 0) {
       this.d3Config.thresholds.forEach(threshold => {
@@ -119,13 +120,13 @@ export default class D3TimeSeriesModifier extends Modifier {
           [
             {
               seriesId: threshold.thresholdId,
-              date: minDate,
-              value: threshold.value
+              xValue: minXvalue,
+              yValue: threshold.value
             },
             {
               seriesId: threshold.thresholdId,
-              date: maxDate,
-              value: threshold.value
+              xValue: maxXvalue,
+              yValue: threshold.value
             }
           ];
         thresholdSeriesData.push(thresholdData);
@@ -135,23 +136,23 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   xScaleGenerator(dataSeries) {
-    return d3.scaleTime()
-      .domain(d3.extent(dataSeries, d => d.date))
+    return d3.scaleLinear()
+      .domain(d3.extent(dataSeries, d => d.xValue))
       .range([0, this.d3Config.layout.widthWithinMargins]);
   }
 
   yScaleGenerator(dataSeries) {
     return d3.scaleLinear()
       .domain(this.d3Config.axis.x.startsAtZero ?
-        [0, d3.max(dataSeries, d => d.value)] :
-        d3.extent(dataSeries, d => d.value))
+        [0, d3.max(dataSeries, d => d.yValue)] :
+        d3.extent(dataSeries, d => d.yValue))
       .range([this.d3Config.layout.heightWithinMargins, 0]);
   }
 
   lineGenerator() {
     return d3.line()
-      .x((d) => this.getValueOnXaxis(d.date))
-      .y((d) => this.getValueOnYaxis(d.value))
+      .x((d) => this.getValueOnXaxis(d.xValue))
+      .y((d) => this.getValueOnYaxis(d.yValue))
       .curve(d3.curveMonotoneX);
   }
 

@@ -7,12 +7,21 @@ export default class Router extends EmberRouter {
 }
 
 Router.map(function() {
-  this.route('line-chart-demo');
-  this.route('scatter-plot-demo');
-  this.route('bar-chart-demo');
-  this.route('area-chart-demo');
-  this.route('line-with-circles-chart-demo');
-  this.route('threshold-lines-demo');
-  this.route('mixed-chart-types-demo');
   this.route('initial-demo');
+
+  this.route('generic', function() {});
+
+  this.route('generic-series', function() {
+    this.route('line-chart-demo');
+  });
+  this.route('time-series', function() {
+    this.route('line-chart-demo');
+    this.route('scatter-plot-demo');
+    this.route('bar-chart-demo');
+    this.route('area-chart-demo');
+    this.route('line-with-circles-chart-demo');
+    this.route('threshold-lines-demo');
+    this.route('mixed-chart-types-demo');
+    this.route('custom-layout-demo');
+  });
 });
