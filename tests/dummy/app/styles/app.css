@@ -16,24 +16,15 @@ body {
   flex-basis: 50%;
 }
 
-.d3-graph {
-  position: relative;
-}
-
 .d3-graph svg {
   background-color: #f5f2f0;
 }
 
 .d3-tooltip {
-  position: absolute;
   padding: 5px;
   background-color: lightgray;
   border: 0px;
   border-radius: 5px;
-}
-
-.d3-tooltip-hidden {
-  display: none;
 }
 
 .d3-tooltip-header {

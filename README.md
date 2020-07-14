@@ -83,7 +83,6 @@ https://github.com/cah-johnryan/ember-d3-modifiers/blob/master/addon/objects/d3-
 ## TODO
 
 1. Make the SVG resizable (if possible)
-2. There are CSS particulars needed for the tooltip to work. Look into how to accomplish creation of those CSS classes here.
 
 ## Contributing
 

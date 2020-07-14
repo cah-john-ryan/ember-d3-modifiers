@@ -95,6 +95,8 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   createSvg() {
+    d3.select(this.element).style('position', 'relative');
+
     return d3.select(this.element)
       .append('svg')
       .attr('width', this.d3Config.layout.width)

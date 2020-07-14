@@ -30,7 +30,9 @@ export default class D3TooltipRenderer {
   renderTooltipElementsWithMouseEvents(targetElement) {
     this.tooltipElement = d3.select(targetElement)
       .append('div')
-      .attr('class', 'd3-tooltip d3-tooltip-hidden');
+      .attr('class', 'd3-tooltip')
+      .style('position', 'absolute')
+      .style('display', 'none');
     this.tooltipVerticalLine = this.d3SvgElement.append('line');
     this.tooltipBoxOverlay = this.d3SvgElement.append('rect')
       .attr('width', this.d3Config.layout.widthWithinMargins + 10)
@@ -70,6 +72,7 @@ export default class D3TooltipRenderer {
 
     this.tooltipElement.html('')
       .attr('class', 'd3-tooltip')
+      .style('display', 'block')
       .style('left', d3.event.pageX + this.d3Config.tooltip.xAxisOffsetFromMouseLocation + 'px')
       .style('top', pixelMouseLocationFromTop + this.d3Config.layout.margin.top + this.d3Config.tooltip.yAxisOffsetFromMouseLocation + 'px');
 
@@ -97,7 +100,7 @@ export default class D3TooltipRenderer {
 
   @action
   handleMouseOut() {
-    if (this.tooltipElement) this.tooltipElement.attr('class', 'd3-tooltip d3-tooltip-hidden').html('');
+    if (this.tooltipElement) this.tooltipElement.style('display', 'none').html('');
     if (this.tooltipVerticalLine) this.tooltipVerticalLine.attr('stroke', 'none');
   }
 }
