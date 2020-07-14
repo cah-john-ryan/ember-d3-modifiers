@@ -6,6 +6,7 @@ import D3LegendRenderer from 'ember-d3-modifiers/objects/d3-legend-renderer';
 import D3SeriesRenderer from 'ember-d3-modifiers/objects/d3-series-renderer';
 import D3TooltipRenderer from 'ember-d3-modifiers/objects/d3-tooltip-renderer';
 import D3AxisRenderer from 'ember-d3-modifiers/objects/d3-axis-renderer';
+import { D3Config } from 'ember-d3-modifiers/objects/d3-config';
 
 //TODO: Need to square this away
 export default class D3GenericSeriesModifier extends Modifier {
@@ -23,7 +24,7 @@ export default class D3GenericSeriesModifier extends Modifier {
 
   /** @member {object} The configuration settings to drive how the chart data should be rendered */
   get d3Config() {
-    return this.args.named.d3Config;
+    return this.args.named.d3Config ?? new D3Config();
   }
 
   /** @member {object} The svg tag that D3 renders in the markup */

@@ -43,8 +43,10 @@ export default class D3TooltipRenderer {
 
   @action
   handleMouseMove() {
-    const mouseLocation = d3.mouse(this.tooltipBoxOverlay.node())[0];
-    const mouseLocationOnXaxis = this.getValueOnXaxis.invert(mouseLocation);
+    const mouseLocationInPixels = d3.mouse(this.tooltipBoxOverlay.node());
+    const pixelMouseLocationFromLeft = mouseLocationInPixels[0];
+    const pixelMouseLocationFromTop = mouseLocationInPixels[1];
+    const mouseLocationOnXaxis = this.getValueOnXaxis.invert(pixelMouseLocationFromLeft);
     let selectedValueOnXaxis = this.allXvalues[0];
     for (let i = 0; i < this.allXvalues.length; i++) {
       if (this.allXvalues[i] > mouseLocationOnXaxis) {
@@ -69,7 +71,7 @@ export default class D3TooltipRenderer {
     this.tooltipElement.html('')
       .attr('class', 'd3-tooltip')
       .style('left', d3.event.pageX + this.d3Config.tooltip.xAxisOffsetFromMouseLocation + 'px')
-      .style('top', d3.event.pageY - this.d3Config.layout.margin.top + this.d3Config.tooltip.yAxisOffsetFromMouseLocation + 'px');
+      .style('top', pixelMouseLocationFromTop + this.d3Config.layout.margin.top + this.d3Config.tooltip.yAxisOffsetFromMouseLocation + 'px');
 
     this.tooltipElement.append('div')
       .attr('class', 'd3-tooltip-header')

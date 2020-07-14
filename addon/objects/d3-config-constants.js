@@ -64,7 +64,7 @@ const defaultLegendConfig = {
 const defaultTooltipConfig = {
   enableVerticalLine: true,
   xAxisOffsetFromMouseLocation: 0,
-  yAxisOffsetFromMouseLocation: -50,
+  yAxisOffsetFromMouseLocation: 20,
   titlePresentationFormatFunction: (selectedXValue) => {
     return `Selected value: ${selectedXValue}`;
   },
