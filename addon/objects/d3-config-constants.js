@@ -39,7 +39,7 @@ const defaultAxisConfig = {
       x: -10,
       y: 5
     },
-    startsAtZero: false,
+    startsAtZero: false, //TODO move to Y axis
     tickFormat: null // See: https://github.com/d3/d3-time-format ex. '%b %e, %I %p'
   },
   y: {
