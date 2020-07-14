@@ -22,7 +22,7 @@ There are several demos available in this repository you can use for reference i
 
 To view these demos:
 
-1. Clone a local instance of this repository to your local machine.
+1. Clone a local instance of this repository to your local machine
 2. Change directory to where that local cloned instance resides
 3. `npm install` to download all needed dependencies
 4. `ember s`
@@ -79,6 +79,11 @@ var d3Config = {
 
 More details on the lower level properties of d3Config can be found at the location below:
 https://github.com/cah-johnryan/ember-d3-modifiers/blob/master/addon/objects/d3-config-constants.js
+
+## TODO
+
+1. Make the SVG resizable (if possible)
+2. There are CSS particulars needed for the tooltip to work. Look into how to accomplish creation of those CSS classes here.
 
 ## Contributing
 

@@ -8,7 +8,6 @@ import D3TooltipRenderer from 'ember-d3-modifiers/objects/d3-tooltip-renderer';
 import D3AxisRenderer from 'ember-d3-modifiers/objects/d3-axis-renderer';
 import { D3Config } from 'ember-d3-modifiers/objects/d3-config';
 
-//TODO: Need to square this away
 export default class D3GenericSeriesModifier extends Modifier {
   didReceiveArguments() {
     this.d3SeriesRenderer = new D3SeriesRenderer();
