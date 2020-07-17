@@ -56,24 +56,24 @@ export default class D3SeriesRenderer {
     this.d3SvgElement.append('path')
       .datum(seriesData)
       .attr('class', this.getClassesToApply(seriesConfig, chartConfig))
-      .attr('fill', 'none')
       .attr('stroke', 'black')
       .attr('stroke-width', chartConfig.lineWidth)
+      .attr('fill', 'none')
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
       .attr('d', this.lineGenerator());
   }
 
   renderBarData(seriesData, seriesConfig, chartConfig) {
-    this.d3SvgElement.selectAll('whatever')
+    this.d3SvgElement.selectAll('whatever') // TODO: Validate that this is needed
       .data(seriesData)
       .enter()
       .append('rect')
       .attr('class', this.getClassesToApply(seriesConfig, chartConfig))
-      .attr('x', d => this.getValueOnXaxis(d.date))
-      .attr('y', d => this.getValueOnYaxis(d.value))
       .attr('stroke', 'black')
       .attr('stroke-width', chartConfig.lineWidth)
+      .attr('x', d => this.getValueOnXaxis(d.date))
+      .attr('y', d => this.getValueOnYaxis(d.value))
       .attr('width', chartConfig.barWidth)
       .attr('height', d => this.d3Config.layout.heightWithinMargins - this.getValueOnYaxis(d.value));
   }

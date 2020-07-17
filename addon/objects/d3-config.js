@@ -31,7 +31,10 @@ export default class D3Config {
     /** @member {object} The default chart configuration to be used in the event that the given
     seriesId is not registered in dataConfig */
     this.genericDataConfig = {};
-    Object.assign(this.genericDataConfig, defaultGenericDataConfig, genericDataConfig ?? {});
+    if (!genericDataConfig) {
+      genericDataConfig = {};
+    }
+    Object.assign(this.genericDataConfig, defaultGenericDataConfig, genericDataConfig);
 
     /** @member {object} A hash of seriesId's with their associated chartConfigs */
     this.dataConfig = dataConfig;
@@ -42,23 +45,38 @@ export default class D3Config {
 
     /** @member {object} height, width, and margin settings */
     this.layout = { margin: {} };
-    Object.assign(this.layout.margin, defaultLayoutConfig.margin, (!layout || layout.margin) ?? {});
-    Object.assign(this.layout, defaultLayoutConfig, layout ?? {});
+    Object.assign(this.layout.margin, defaultLayoutConfig.margin);
+    if (layout && layout.margin) {
+      Object.assign(this.layout.margin, layout.margin);
+    }
+    Object.assign(this.layout, defaultLayoutConfig, layout);
     this.layout.heightWithinMargins = this.layout.height - this.layout.margin.top - this.layout.margin.bottom;
     this.layout.widthWithinMargins = this.layout.width - this.layout.margin.left - this.layout.margin.right;
 
     /** @member {object} x and y axis settings */
     this.axis = { x: {}, y: {} };
-    Object.assign(this.axis.x, this instanceof D3TimeSeriesConfig ? defaultTimeSeriesAxisConfig.x : defaultAxisConfig.x, (!axis || axis.x) ?? {});
-    Object.assign(this.axis.y, this instanceof D3TimeSeriesConfig ? defaultTimeSeriesAxisConfig.y : defaultAxisConfig.y, (!axis || axis.y) ?? {});
+    Object.assign(this.axis.x, this instanceof D3TimeSeriesConfig ? defaultTimeSeriesAxisConfig.x : defaultAxisConfig.x);
+    Object.assign(this.axis.y, this instanceof D3TimeSeriesConfig ? defaultTimeSeriesAxisConfig.y : defaultAxisConfig.y);
+    if (axis && axis.x) {
+      Object.assign(this.axis.x, axis.x);
+    }
+    if (axis && axis.y) {
+      Object.assign(this.axis.y, axis.y);
+    }
 
     /** @member {object} settings for rendering of the chart legend */
     this.legend = {};
-    Object.assign(this.legend, defaultLegendConfig, legend ?? {});
+    Object.assign(this.legend, defaultLegendConfig, legend);
+    if (legend) {
+      Object.assign(this.legend, legend);
+    }
 
     /** @member {object} settings for rendering of tooltips */
     this.tooltip = {};
-    Object.assign(this.tooltip, this instanceof D3TimeSeriesConfig ? defaultTimeSeriesTooltipConfig : defaultTooltipConfig, tooltip ?? {});
+    Object.assign(this.tooltip, this instanceof D3TimeSeriesConfig ? defaultTimeSeriesTooltipConfig : defaultTooltipConfig, tooltip);
+    if (tooltip) {
+      Object.assign(this.tooltip, tooltip);
+    }
 
     if (this.isAreaChartTypePresentInDataConfig()) {
       this.axis.x.startsAtZero = true;

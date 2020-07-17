@@ -23,7 +23,7 @@ export default class D3TimeSeriesModifier extends Modifier {
 
   /** @member {object} The configuration settings to drive how the chart data should be rendered */
   get d3Config() {
-    return this.args.named.d3Config ?? new D3TimeSeriesConfig();
+    return !this.args.named.d3Config ? new D3TimeSeriesConfig() : this.args.named.d3Config;
   }
 
   /** @member {object} The svg tag that D3 renders in the markup */
