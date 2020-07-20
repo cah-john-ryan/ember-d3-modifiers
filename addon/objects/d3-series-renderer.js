@@ -65,7 +65,7 @@ export default class D3SeriesRenderer {
   }
 
   renderBarData(seriesData, seriesConfig, chartConfig) {
-    this.d3SvgElement.selectAll('whatever') // TODO: Validate that this is needed
+    this.d3SvgElement.selectAll()
       .data(seriesData)
       .enter()
       .append('rect')
@@ -88,7 +88,7 @@ export default class D3SeriesRenderer {
   }
 
   renderCircleData(seriesData, seriesConfig, chartConfig) {
-    this.d3SvgElement.selectAll('whatever')
+    this.d3SvgElement.selectAll()
       .data(seriesData)
       .enter()
       .append('circle')
