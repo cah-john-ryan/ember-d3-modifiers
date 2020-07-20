@@ -79,7 +79,7 @@ export default class D3Config {
     }
 
     if (this.isAreaChartTypePresentInDataConfig()) {
-      this.axis.x.startsAtZero = true;
+      this.axis.y.startsAtZero = true;
     }
   }
 

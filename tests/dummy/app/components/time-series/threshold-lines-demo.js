@@ -18,7 +18,7 @@ export default class TimeSeriesThresholdLinesDemoComponent extends Component {
       { thresholdId: 'Low Value Threshold', value: 3, className: 'low-value-threshold' }
     ],
     axis: {
-      x: {
+      y: {
         startsAtZero: true
       }
     }

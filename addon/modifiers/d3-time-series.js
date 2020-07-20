@@ -145,7 +145,7 @@ export default class D3TimeSeriesModifier extends Modifier {
 
   yScaleGenerator(dataSeries) {
     return d3.scaleLinear()
-      .domain(this.d3Config.axis.x.startsAtZero ?
+      .domain(this.d3Config.axis.y.startsAtZero ?
         [0, d3.max(dataSeries, d => d.value)] :
         d3.extent(dataSeries, d => d.value))
       .range([this.d3Config.layout.heightWithinMargins, 0]);
