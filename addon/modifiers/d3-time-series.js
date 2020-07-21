@@ -21,6 +21,10 @@ export default class D3TimeSeriesModifier extends Modifier {
    * The data structure should have three properties: seriesId, date, and value */
   @tracked chartData = this.args.named.chartData;
 
+  /** @member {Array.} Optional threshold data that is to be rendered
+   * The data structure should have these properties: thresholdId and value */
+  @tracked thresholdConfig = this.args.named.thresholdConfig;
+
   /** @member {object} The configuration settings to drive how the chart data should be rendered */
   get d3Config() {
     return !this.args.named.d3Config ? new D3TimeSeriesConfig() : this.args.named.d3Config;
@@ -43,14 +47,23 @@ export default class D3TimeSeriesModifier extends Modifier {
 
   /** @member {Array.} All date values in the source data to help with xAxis mapping in the tooltip placement logic */
   @tracked allDateValues = [];
+  minDate = null;
+  maxDate = null;
 
   loadD3Chart() {
+    if (this.svgElement) {
+      const thresholdSeriesData = this.thresholdLines();
+      this.renderThresholdLines(thresholdSeriesData);
+      return;
+    }
     this.svgElement = this.createSvg();
     this.d3LegendRenderer.d3SvgElement = this.svgElement;
 
 
     const { minDate, maxDate, setOfXvalues } = this.assessChartDataProvided();
-    const thresholdSeriesData = this.thresholdLines(minDate, maxDate);
+    this.minDate = minDate;
+    this.maxDate = maxDate;
+    const thresholdSeriesData = this.thresholdLines();
     this.allDateValues = Array.from(setOfXvalues).sort((a, b) => a.getTime() > b.getTime());
 
     this.getValueOnXaxis = this.xScaleGenerator([].concat(this.chartData, ...thresholdSeriesData));
@@ -114,20 +127,20 @@ export default class D3TimeSeriesModifier extends Modifier {
     }, { minDate: this.chartData[0].date, maxDate: this.chartData[0].date, setOfXvalues: new Set() });
   }
 
-  thresholdLines(minDate, maxDate) {
+  thresholdLines() {
     let thresholdSeriesData = [];
-    if (this.d3Config.thresholds && this.d3Config.thresholds.length > 0) {
-      this.d3Config.thresholds.forEach(threshold => {
+    if (this.thresholdConfig && this.thresholdConfig.length > 0) {
+      this.thresholdConfig.forEach(threshold => {
         let thresholdData =
           [
             {
               seriesId: threshold.thresholdId,
-              date: minDate,
+              date: this.minDate,
               value: threshold.value
             },
             {
               seriesId: threshold.thresholdId,
-              date: maxDate,
+              date: this.maxDate,
               value: threshold.value
             }
           ];
@@ -170,10 +183,13 @@ export default class D3TimeSeriesModifier extends Modifier {
   }
 
   renderThresholdLines(thresholdSeriesData) {
+    this.svgElement.selectAll('path.threshold-line').remove()
     if (thresholdSeriesData.length > 0) {
       thresholdSeriesData.forEach(thresholdData => {
-        const thresholdConfig = this.d3Config.thresholds.find(threshold => threshold.thresholdId === thresholdData[0].seriesId);
-        const classNamesToApply = thresholdConfig.className ? `${dasherize(thresholdData[0].seriesId)} ${thresholdConfig.className}` : `${dasherize(thresholdData[0].seriesId)}`;
+        const thresholdConfig = this.thresholdConfig.find(threshold => threshold.thresholdId === thresholdData[0].seriesId);
+        const seriesIdAsClassName = dasherize(thresholdData[0].seriesId);
+        const classNamesToApply = thresholdConfig.className ? `threshold-line ${seriesIdAsClassName} ${thresholdConfig.className}` : `threshold-line ${seriesIdAsClassName}`;
+
         this.svgElement.append('path')
           .datum(thresholdData)
           .attr('class', classNamesToApply)
