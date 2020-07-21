@@ -1,10 +1,9 @@
 import Component from '@glimmer/component';
 import { D3TimeSeriesConfig, LineConfig } from 'ember-d3-modifiers';
 import { inject as service } from '@ember/service';
-import { tracked } from '@glimmer/tracking';
 
 export default class TimeSeriesThresholdLinesDemoComponent extends Component {
-  @tracked d3Config = new D3TimeSeriesConfig({
+  d3Config = new D3TimeSeriesConfig({
     dataConfig: {
       'Temperature A': {
         className: 'series-a-custom-styling',
@@ -13,16 +12,17 @@ export default class TimeSeriesThresholdLinesDemoComponent extends Component {
         ]
       }
     },
-    thresholds: [
-      { thresholdId: 'High Value Threshold', value: 5, className: 'high-value-threshold' },
-      { thresholdId: 'Low Value Threshold', value: 3, className: 'low-value-threshold' }
-    ],
     axis: {
       y: {
         startsAtZero: true
       }
     }
   });
+
+  thresholds = [
+    { thresholdId: 'High Value Threshold', value: 5, className: 'threshold-line' },
+    { thresholdId: 'Low Value Threshold', value: 3, className: 'threshold-line' }
+  ];
 
   @service fakeDataGenerator;
   get chartData() {

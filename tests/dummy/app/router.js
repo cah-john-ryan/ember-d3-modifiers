@@ -21,5 +21,6 @@ Router.map(function() {
     this.route('threshold-lines-demo');
     this.route('mixed-chart-types-demo');
     this.route('custom-layout-demo');
+    this.route('changing-threshold-lines-demo');
   });
 });

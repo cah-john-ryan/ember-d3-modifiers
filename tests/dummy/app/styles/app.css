@@ -97,8 +97,7 @@ body {
   stroke: DarkBlue;
   fill: none;
 }
-.low-value-threshold,
-.high-value-threshold {
+.threshold-line {
   fill: none;
   stroke: red;
   stroke-width: 1;
