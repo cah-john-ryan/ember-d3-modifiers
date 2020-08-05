@@ -82,7 +82,9 @@ https://github.com/cah-johnryan/ember-d3-modifiers/blob/master/addon/objects/d3-
 
 ## TODO
 
-1. Make the SVG resizable (if possible)
+1. Bar chart with multiple series
+2. More documentation on the d3Config in the dummy application.
+3. More examples of the generic series
 
 ## Contributing
 
