@@ -1,13 +1,13 @@
 {
   "name": "ember-d3-modifiers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
+  "repository": "https://github.com/cah-johnryan/ember-d3-modifiers",
   "license": "MIT",
-  "author": "",
+  "author": "John Ryan <john.ryan@cardinalhealth.com>",
   "directories": {
     "doc": "doc",
     "test": "tests"
