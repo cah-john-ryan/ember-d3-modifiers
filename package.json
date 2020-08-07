@@ -1,6 +1,6 @@
 {
   "name": "ember-d3-modifiers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
@@ -19,7 +19,7 @@
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "npm-run-all lint:* test:*",
-    "test:ember": "ember test",
+    "test:ember": "ember test --query=nolint",
     "test:ember-compatibility": "ember try:each"
   },
   "dependencies": {
