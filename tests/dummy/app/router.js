@@ -9,6 +9,10 @@ export default class Router extends EmberRouter {
 Router.map(function() {
   this.route('generic', function() {});
 
+  this.route('d3-v7-sourced-demos', function() {
+    this.route('tooltip');
+  });
+
   this.route('generic-series', function() {
     this.route('line-chart-demo');
   });
