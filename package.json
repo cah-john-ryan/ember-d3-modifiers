@@ -25,7 +25,7 @@
   "dependencies": {
     "@glimmer/tracking": "^1.0.4",
     "d3": "^5.16.0",
-    "ember-auto-import": "^1.6.0",
+    "ember-auto-import": "^2.2.4",
     "ember-cli-babel": "^7.26.6",
     "ember-cli-htmlbars": "^6.0.0",
     "ember-modifier": "^3.0.0"
