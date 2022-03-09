@@ -1,5 +1,6 @@
 import { LineConfig } from 'ember-d3-modifiers/objects/d3-config-generators';
-import moment from 'moment';
+import { findMoment } from '../find-moment';
+const moment = findMoment();
 
 export {
   chartTypes,
