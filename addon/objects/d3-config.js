@@ -4,10 +4,10 @@ import {
   defaultLayoutConfig,
   defaultAxisConfig, defaultTimeSeriesAxisConfig,
   defaultLegendConfig,
-  defaultTooltipConfig, defaultTimeSeriesTooltipConfig
+  defaultTooltipConfig, defaultTimeSeriesTooltipConfig, defaultPieChartAccessor, defaultPieChartLayoutConfig
 } from 'ember-d3-modifiers/objects/d3-config-constants';
 
-export { D3TimeSeriesConfig };
+export { D3TimeSeriesConfig, D3PieChartConfig };
 
 export default class D3Config {
   constructor({
@@ -132,5 +132,33 @@ class D3TimeSeriesConfig extends D3Config {
       legend,
       tooltip
     })
+  }
+}
+
+class D3PieChartConfig {
+  constructor({
+                layout,
+                accessor,
+                generateToolTipHeader,
+                generateToolTipContent
+              } = {
+    layout: {},
+    accessor: {},
+    generateToolTipHeader: () => {},
+    generateToolTipContent: () => {}
+  }) {
+    /** @member {object} height, width settings */
+    this.layout = {};
+    Object.assign(this.layout, defaultPieChartLayoutConfig, layout);
+
+    /** @member {object} define how the chart data should be accessed */
+    this.accessor = {};
+    Object.assign(this.accessor, defaultPieChartAccessor, accessor);
+
+    /** @member {function} generate tooltip header */
+    this.generateToolTipHeader = generateToolTipHeader;
+
+    /** @member {function} generate tooltip content */
+    this.generateToolTipContent = generateToolTipContent;
   }
 }

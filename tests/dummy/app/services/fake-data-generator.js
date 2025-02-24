@@ -53,4 +53,15 @@ export default class FakeDataGeneratorService extends Service {
     }
     return data;
   }
+
+  generateFakePieChart(numberOfIterations, accessor) {
+    let data = [];
+    for (let i = 0; i < numberOfIterations; ++i) {
+      data.push({
+        [accessor.label]: `fakeLabel ${i}`,
+        [accessor.value]: Math.floor(Math.random() * 100) + 1,
+      });
+    }
+    return data;
+  }
 }

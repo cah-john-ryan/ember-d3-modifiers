@@ -8,7 +8,8 @@ export {
   defaultLayoutConfig,
   defaultAxisConfig, defaultTimeSeriesAxisConfig,
   defaultLegendConfig,
-  defaultTooltipConfig, defaultTimeSeriesTooltipConfig
+  defaultTooltipConfig, defaultTimeSeriesTooltipConfig,
+  defaultPieChartAccessor, defaultPieChartLayoutConfig
 }
 
 const chartTypes = {
@@ -82,3 +83,13 @@ const defaultTimeSeriesTooltipConfig = Object.assign({}, defaultTooltipConfig, {
     return `${seriesId}: ${value.toFixed(2)}`;
   }
 });
+
+const defaultPieChartAccessor = {
+  label: d => d.label,
+  value: d => d.value
+}
+
+const defaultPieChartLayoutConfig = {
+  height: 300,
+  width: 300,
+};
