@@ -23,4 +23,7 @@ Router.map(function() {
     this.route('custom-layout-demo');
     this.route('changing-threshold-lines-demo');
   });
+  this.route('pie-chart', function() {
+    this.route('pie-chart-demo');
+  });
 });
