@@ -27,4 +27,13 @@ class CircleConfig extends LineConfig {
   }
 }
 
-export { LineConfig, BarConfig, AreaConfig, CircleConfig };
+class CircleAndToolTipConfig extends CircleConfig {
+  constructor({ radius, lineWidth, presentationFormatFunction }) {
+    super({ lineWidth: lineWidth })
+    this.chartType = chartTypes.circleAndTooltip;
+    this.radius = radius;
+    this.presentationFormatFunction = presentationFormatFunction;
+  }
+}
+
+export { LineConfig, BarConfig, AreaConfig, CircleConfig, CircleAndToolTipConfig };
