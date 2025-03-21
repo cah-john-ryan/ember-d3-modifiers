@@ -1,7 +1,7 @@
 {
   "name": "ember-d3-modifiers",
-  "version": "2.0.2",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "2.0.3",
+  "description": "This is an EmberJS addon to provide some simple D3 visualizations/charts in an EmberJS application via modifiers",
   "keywords": [
     "ember-addon"
   ],
