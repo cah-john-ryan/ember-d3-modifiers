@@ -26,4 +26,7 @@ Router.map(function() {
   this.route('pie-chart', function() {
     this.route('pie-chart-demo');
   });
+  this.route('categorical-series', function() {
+    this.route('line-chart-demo');
+  });
 });

@@ -64,4 +64,24 @@ export default class FakeDataGeneratorService extends Service {
     }
     return data;
   }
+
+  generateFakeCategoricalSeries(fakeSeriesIds, numberOfIterations, endDate) {
+    let data = [];
+    let end = moment(endDate, 'YYYY-MM-DD');
+    let start = end.clone().subtract(numberOfIterations, 'weeks');
+    let interval = 7; // 7 days in a week
+
+    fakeSeriesIds.forEach(fakeSeriesId => {
+      for (let i = 0; i < numberOfIterations; ++i) {
+        let rangeStart = start.clone().add(i * interval, 'days');
+        data.push({
+          seriesId: fakeSeriesId,
+          label: rangeStart.format('YYYY-MM-DD'),
+          value: Math.floor(Math.random() * 100) + 1,
+        });
+      }
+    });
+
+    return data;
+  }
 }

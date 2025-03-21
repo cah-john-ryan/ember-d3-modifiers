@@ -35,13 +35,13 @@ export default class D3GenericSeriesModifier extends Modifier {
 
   /**
   * Get the x value (in pixels) from the date provided
-  * @function 
+  * @function
   */
   getValueOnXaxis;
 
   /**
    * Get the y value (in pixels) from the value provided
-   * @function 
+   * @function
    */
   getValueOnYaxis;
 
@@ -87,6 +87,7 @@ export default class D3GenericSeriesModifier extends Modifier {
 
     this.d3SeriesRenderer.initialize({
       svgElement: this.svgElement,
+      element: this.element,
       d3Config: this.d3Config,
       getValueOnXaxis: this.getValueOnXaxis,
       getValueOnYaxis: this.getValueOnYaxis,

@@ -36,7 +36,7 @@ body {
   stroke: DarkBlue;
   fill: none;
   /* config values that can also be overridden here in CSS for `.d3-graph .line`
-    stroke-width: 5; 
+    stroke-width: 5;
    */
 }
 .line-chart-demo.d3-graph path.line.series-a-custom-styling {
@@ -78,7 +78,7 @@ body {
   stroke: DarkBlue;
   fill: CornflowerBlue;
   /* config values that can also be overridden here in CSS for `.d3-graph .area`
-    stroke-width: 5; 
+    stroke-width: 5;
    */
 }
 
@@ -88,6 +88,10 @@ body {
   fill: none;
 }
 .line-with-circles-chart-demo.d3-graph .circle.series-a-custom-styling {
+  stroke: DarkBlue;
+  fill: CornflowerBlue;
+}
+.line-with-circles-chart-demo.d3-graph .circleAndTooltip.series-a-custom-styling {
   stroke: DarkBlue;
   fill: CornflowerBlue;
 }
@@ -126,7 +130,7 @@ body {
   stroke: DarkBlue;
   fill: none;
   /* config values that can also be overridden here in CSS for `.d3-graph .line`
-    stroke-width: 5; 
+    stroke-width: 5;
    */
 }
 .custom-layout-demo.d3-graph path.line.series-a-custom-styling {

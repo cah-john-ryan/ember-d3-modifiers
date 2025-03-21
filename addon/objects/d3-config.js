@@ -4,10 +4,11 @@ import {
   defaultLayoutConfig,
   defaultAxisConfig, defaultTimeSeriesAxisConfig,
   defaultLegendConfig,
-  defaultTooltipConfig, defaultTimeSeriesTooltipConfig, defaultPieChartAccessor, defaultPieChartLayoutConfig
+  defaultTooltipConfig, defaultTimeSeriesTooltipConfig,
+  defaultPieChartAccessor, defaultPieChartLayoutConfig,
 } from 'ember-d3-modifiers/objects/d3-config-constants';
 
-export { D3TimeSeriesConfig, D3PieChartConfig };
+export { D3TimeSeriesConfig, D3PieChartConfig, D3CategoricalSeriesConfig };
 
 export default class D3Config {
   constructor({
@@ -90,7 +91,7 @@ export default class D3Config {
     }
     if (this.dataConfig) {
       Object.keys(this.dataConfig).forEach(dataConfigKey => {
-        if (this.dataConfig[dataConfigKey].chartTypes.some(c => c.chartType === chartTypes.area)) {
+        if (this.dataConfig[dataConfigKey].chartTypes != null && this.dataConfig[dataConfigKey].chartTypes.some(c => c.chartType === chartTypes.area)) {
           result = true;
         }
       });
@@ -160,5 +161,35 @@ class D3PieChartConfig {
 
     /** @member {function} generate tooltip content */
     this.generateToolTipContent = generateToolTipContent;
+  }
+}
+
+class D3CategoricalSeriesConfig extends D3Config {
+  constructor({
+                genericDataConfig,
+                dataConfig,
+                thresholds,
+                layout,
+                axis,
+                legend,
+                tooltip
+              } = {
+    genericDataConfig: {},
+    dataConfig: {},
+    thresholds: [],
+    layout: {},
+    axis: {},
+    legend: {},
+    tooltip: {}
+  }) {
+    super({
+      genericDataConfig,
+      dataConfig,
+      thresholds,
+      layout,
+      axis,
+      legend,
+      tooltip
+    });
   }
 }

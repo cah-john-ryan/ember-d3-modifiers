@@ -9,14 +9,15 @@ export {
   defaultAxisConfig, defaultTimeSeriesAxisConfig,
   defaultLegendConfig,
   defaultTooltipConfig, defaultTimeSeriesTooltipConfig,
-  defaultPieChartAccessor, defaultPieChartLayoutConfig
+  defaultPieChartAccessor, defaultPieChartLayoutConfig,
 }
 
 const chartTypes = {
   circle: 'circle',
   line: 'line',
   bar: 'bar',
-  area: 'area'
+  area: 'area',
+  circleAndTooltip: 'circleAndTooltip'
 };
 
 const defaultGenericDataConfig =
@@ -41,13 +42,15 @@ const defaultAxisConfig = {
       x: -10,
       y: 5
     },
+    tickSize: "10px",
     tickFormat: null // See: https://github.com/d3/d3-time-format ex. '%b %e, %I %p'
   },
   y: {
     title: 'Y Value',
     titleRotation: -90,
     titleOffsetInPixels: -35,
-    tickCount: 10, // The number of ticks D3 should present
+    tickCount: 10, // The number of ticks D3 should present,
+    tickSize: "10px",
     startsAtZero: false
   }
 };
