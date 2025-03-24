@@ -6,7 +6,7 @@ import D3LegendRenderer from 'ember-d3-modifiers/objects/d3-legend-renderer';
 import D3SeriesRenderer from 'ember-d3-modifiers/objects/d3-series-renderer';
 import D3TooltipRenderer from 'ember-d3-modifiers/objects/d3-tooltip-renderer';
 import D3AxisRenderer from 'ember-d3-modifiers/objects/d3-axis-renderer';
-import { D3Config } from 'ember-d3-modifiers/objects/d3-config';
+import D3Config from 'ember-d3-modifiers/objects/d3-config';
 
 export default class D3GenericSeriesModifier extends Modifier {
   didReceiveArguments() {
