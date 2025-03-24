@@ -6,9 +6,9 @@ This is an Ember modifier that lets you render a D3 document/graph/chart for som
 
 ## Compatibility
 
-- Ember.js v3.12 or above
-- Ember CLI v2.13 or above
-- Node.js v10 or above
+- Ember.js v3.28 or above
+- Ember CLI v3.28 or above
+- Node.js v18 or above
 
 ## Installation
 

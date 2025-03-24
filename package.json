@@ -1,6 +1,6 @@
 {
   "name": "ember-d3-modifiers",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "This is an EmberJS addon to provide some simple D3 visualizations/charts in an EmberJS application via modifiers",
   "keywords": [
     "ember-addon"
