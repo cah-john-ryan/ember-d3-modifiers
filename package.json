@@ -80,7 +80,10 @@
     }
   },
   "engines": {
-    "node": "10.* || 12.* || >= 14.*"
+    "node": ">= 18",
+    "yarn": "Please use npm i",
+    "npm": ">= 9.5.1",
+    "pnpm": "Please use npm i"
   },
   "ember": {
     "edition": "octane"

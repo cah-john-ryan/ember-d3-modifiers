@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [12.x]
+        node-version: [22.x]
     steps:
       - name: Check out a copy of the repo
         uses: actions/checkout@v2
@@ -22,20 +22,20 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: lint:hbs
-        run: yarn lint:hbs
+        run: npm run lint:hbs
 
       - name: lint:js
-        run: yarn lint:js
+        run: npm run lint:js
   test:
     name: Run tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [12.x]
+        node-version: [22.x]
     steps:
       - name: Check out a copy of the repo
         uses: actions/checkout@v2
@@ -46,7 +46,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: Test Ember app
-        run: yarn test:ember
+        run: npm run test:ember
